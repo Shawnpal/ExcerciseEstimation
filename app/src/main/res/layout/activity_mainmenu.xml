@@ -8,8 +8,8 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"
-        android:layout_width="409dp"
-        android:layout_height="wrap_content"
+        android:layout_width="401dp"
+        android:layout_height="38dp"
         android:background="#5271B355"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
@@ -19,17 +19,39 @@
         app:navigationIcon="@drawable/icon_nav" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/txtEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Start a new Journey"
+        android:text="Email:"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/txtFirstname" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/txtSex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Sex:"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/txtEmail"
+        app:layout_constraintStart_toStartOf="@+id/txtEmail"
+        app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
+
+    <TextView
+        android:id="@+id/txtAge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Age:"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/txtSex"
+        app:layout_constraintHorizontal_bias="0.533"
+        app:layout_constraintStart_toStartOf="@+id/txtSex"
+        app:layout_constraintTop_toBottomOf="@+id/txtSex" />
+
+    <TextView
+        android:id="@+id/txtFirstname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -39,10 +61,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar2" />
 
+    <TextView
+        android:id="@+id/txtLastname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginLeft="10dp"
+        android:text="Chen"
+        android:textSize="30sp"
+        app:layout_constraintStart_toEndOf="@+id/txtFirstname"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar2" />
+
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar2"
@@ -71,8 +104,8 @@
 
                 <ImageView
                     android:id="@+id/imageView1"
-                    android:layout_width="196dp"
-                    android:layout_height="140dp"
+                    android:layout_width="170dp"
+                    android:layout_height="110dp"
                     android:background="#615E5E"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -109,8 +142,8 @@
 
                 <ImageView
                     android:id="@+id/imageV10"
-                    android:layout_width="196dp"
-                    android:layout_height="140dp"
+                    android:layout_width="170dp"
+                    android:layout_height="110dp"
                     android:background="#616060"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -160,8 +193,8 @@
 
                 <ImageView
                     android:id="@+id/imageView2"
-                    android:layout_width="196dp"
-                    android:layout_height="140dp"
+                    android:layout_width="170dp"
+                    android:layout_height="110dp"
                     android:background="#615E5E"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -198,8 +231,8 @@
 
                 <ImageView
                     android:id="@+id/imageV11"
-                    android:layout_width="196dp"
-                    android:layout_height="140dp"
+                    android:layout_width="170dp"
+                    android:layout_height="110dp"
                     android:background="#616060"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -249,8 +282,8 @@
 
                 <ImageView
                     android:id="@+id/imageView21"
-                    android:layout_width="196dp"
-                    android:layout_height="140dp"
+                    android:layout_width="170dp"
+                    android:layout_height="110dp"
                     android:background="#615E5E"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -287,8 +320,8 @@
 
                 <ImageView
                     android:id="@+id/imageV21"
-                    android:layout_width="196dp"
-                    android:layout_height="140dp"
+                    android:layout_width="170dp"
+                    android:layout_height="110dp"
                     android:background="#616060"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"

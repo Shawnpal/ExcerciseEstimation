@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +21,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
+public class LoginActivity extends AppCompatActivity {
 
     private Retrofit retrofit;
     private RetrofitInterface retrofitInterface;
@@ -30,10 +33,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(((GlobalConstants) this.getApplication()).getBASE_URL())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -109,8 +112,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void Onlogin(View view)
     {
+        String fName = nametext.getText().toString();
         HashMap<String, String> map = new HashMap<>();
-        map.put("FirstName", nametext.getText().toString()) ;
+        map.put("FirstName", fName) ;
 
         Call<LoginResult> call = retrofitInterface.executeLogin(map);
         call.enqueue(new Callback<LoginResult>(){
@@ -120,16 +124,20 @@ public class MainActivity extends AppCompatActivity {
                 {
 
                     LoginResult result = response.body();
-                    Log.i("Success",result.toString());
-
+              //      Log.i("Success",result.toString());
+                    String resultTrimed = (result.getFirstname()).replace(" ", ""); //Results returns a lot of spaces in the name we need to trim
+                    Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+                    intent.putExtra("USERNAME", resultTrimed );
+                    startActivity(intent);
                 }
             }
 
             @Override
             public void onFailure(Call<LoginResult> call, Throwable t) {
-                Toast.makeText(MainActivity.this, t.getMessage(),Toast.LENGTH_LONG);
+                Toast.makeText(LoginActivity.this, t.getMessage(),Toast.LENGTH_LONG);
 
             }
         });
+
     }
 }
