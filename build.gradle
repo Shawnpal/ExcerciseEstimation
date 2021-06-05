@@ -15,11 +15,13 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
         jcenter()
+        google()
+        flatDir {
+            dirs 'aar'
+        }
     }
 }
-
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

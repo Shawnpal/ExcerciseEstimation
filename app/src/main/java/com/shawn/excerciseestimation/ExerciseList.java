@@ -16,4 +16,6 @@ public interface ExerciseList {
         @POST("/getExercises")
         Call<List<Exercise>> loadExercise(@Body HashMap<String,String> map);
 
+        @POST("/getWalks")
+        Call<List<Walks>> loadWalks(@Body HashMap<String,String> map);
     }
