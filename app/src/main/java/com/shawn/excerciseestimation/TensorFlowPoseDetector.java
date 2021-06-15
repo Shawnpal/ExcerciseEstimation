@@ -55,17 +55,10 @@ public class TensorFlowPoseDetector implements Classifier {
         } catch (RuntimeException re) {
             Log.e(TAG, "CAUSE " + re.getCause().getMessage(), re);
         }
-        // The shape of the output is [N, NUM_CLASSES], where N is the batch size.
 
-        // heatMap=(46, 46, 19) pafMat=(46, 46, 38)
         int heatMap = (46 * 46 * 19);
         int pafMat = (46 * 46 * 38);
-//    final Operation operation = c.inferenceInterface.graphOperation(outputNodeNames[0]);
-//    final int numClasses = (int) operation.output(0).shape().size(1);
-//    Log.i(TAG, "Output layer 1 size is " + numClasses);
-//    final Operation operation1 = c.inferenceInterface.graphOperation(outputNodeNames[1]);
-//    final int numClasses1 = (int) operation1.output(0).shape().size(1);
-//    Log.i(TAG, "Output layer 2 size is " + numClasses1);
+
 
         // Ideally, inputSize could have been retrieved from the shape of the input operation.  Alas,
         // the placeholder node for input in the graphdef typically used does not specify a shape, so it
@@ -93,18 +86,13 @@ public class TensorFlowPoseDetector implements Classifier {
         // Preprocess the image data from 0-255 int to normalized float based
         // on the provided parameters.
 
-        //def preprocess(img, width, height):
+
         int w = bitmap.getWidth();
-       // int[] pixels = new int[230400];
+
         bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         for (int i = 0; i < intValues.length; ++i) {
             final int val = intValues[i];
-            //floatValues[i * 3 + 0] = (((val >> 16) & 0xFF) - imageMean) / imageStd;
-            //floatValues[i * 3 + 1] = (((val >> 8) & 0xFF) - imageMean) / imageStd;
-            //floatValues[i * 3 + 2] = ((val & 0xFF) - imageMean) / imageStd;
 
-            //val_image = val_image.astype(float)
-            //val_image = val_image * (2.0 / 255.0) - 1.0
 
             // OpenCV uses : B G R
             floatValues[i * 3 + 0] = ((float) (val & 0xFF) * 2.0f / 255.0f) - 1.0f;         //B
@@ -146,7 +134,7 @@ public class TensorFlowPoseDetector implements Classifier {
 
         final ArrayList<Recognition> recognitions = new ArrayList<Recognition>();
         Recognition r0 = new Recognition("a", "a", 1f, new RectF(0, 0, 10, 10));
-        // heatMap=(46, 46, 19) pafMat=(46, 46, 38)
+
 
         List<Human> humans = estimatePose(outputHeatMap, outputPafMat);
         Log.e(TAG, "Humans found = " + humans.size());
@@ -179,7 +167,6 @@ public class TensorFlowPoseDetector implements Classifier {
 
     private int outToColor(float val) {
 
-        //int v = (int) (clamp(val, 0,1) * 255);
         int v = (int) clamp(val * 255 * 50, 0, 255);
         return Color.rgb(v, 0, 0);
     }
@@ -429,10 +416,7 @@ public class TensorFlowPoseDetector implements Classifier {
             for (String[] comb : keyComb) {
                 String k1 = comb[0];
                 String k2 = comb[1];
-//                if (k1 == k2) {
-//                    continue;
-//                }
-                //if (k2 in no_merge_cache[ k1])continue;
+
                 if (no_merge_cache.containsKey(k1) && no_merge_cache.get(k1).contains(k2)) {
                     continue;
                 }

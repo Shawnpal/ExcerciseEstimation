@@ -42,15 +42,16 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
     private PieChart PieChart;
     private List<Exercise> Elist = new ArrayList<Exercise>();
     private List<Walks> Wlist = new ArrayList<Walks>();
-    private TextView Averagetext,HeartBeattext;
+    private TextView Averagetext, HeartBeattext;
 
     private BarChart BarChart;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor);
         ExerciseList ExerciseAPI = RestClient.getClient();
         HashMap<String, String> map = new HashMap<>();
-        map.put("FirstName", "Shawn") ;
+        map.put("FirstName", "Shawn");
 
         Call<List<Exercise>> loadSizeCall = ExerciseAPI.loadExercise(map);
         Call<List<Walks>> loadBarCall = ExerciseAPI.loadWalks(map);
@@ -60,11 +61,10 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
         Averagetext = findViewById(R.id.textAverageMins);
 
 
-
-      loadSizeCall.enqueue(new Callback<List<Exercise>>() {
+        loadSizeCall.enqueue(new Callback<List<Exercise>>() {
             @Override
             public void onResponse(Call<List<Exercise>> call, Response<List<Exercise>> response) {
-                for(Exercise size: response.body()) {
+                for (Exercise size : response.body()) {
                     Elist.add(size);
 
                 }
@@ -73,10 +73,10 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
 
             }
 
-          @Override
-          public void onFailure(Call<List<Exercise>> call, Throwable t) {
-              Toast.makeText(EMonitorActivity.this, t.getMessage(),Toast.LENGTH_LONG);
-          }
+            @Override
+            public void onFailure(Call<List<Exercise>> call, Throwable t) {
+                Toast.makeText(EMonitorActivity.this, t.getMessage(), Toast.LENGTH_LONG);
+            }
 
 
         });
@@ -87,7 +87,7 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
             @Override
             public void onResponse(Call<List<Walks>> call, Response<List<Walks>> response) {
 
-                for(Walks size: response.body()) {
+                for (Walks size : response.body()) {
                     Wlist.add(size);
 
                 }
@@ -102,6 +102,7 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
 
         });
     }
+
     private void setBarChart() {
 
         BarChart.getDescription().setEnabled(false);
@@ -113,14 +114,12 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
         BarChart.setDrawGridBackground(false);
 
 
-
         BarChart.getAxisLeft().setDrawGridLines(false);
 
         BarChart.getLegend().setEnabled(false);
 
 
         BarChart.setFitBars(true);
-
 
 
         Legend l = BarChart.getLegend();
@@ -156,7 +155,6 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
         float barSpace = 0.03f; // x4 DataSet
         float barWidth = 0.2f; // x4 DataSet
         // (0.2 + 0.03) * 4 + 0.08 = 1.00 -> interval per "group"
-
 
 
         ArrayList<BarEntry> values1 = new ArrayList<>();
@@ -213,8 +211,8 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
         BarChart.groupBars(0, groupSpace, barSpace);
         BarChart.invalidate();
     }
-    private void setPieChart() {
 
+    private void setPieChart() {
 
 
         PieChart.setUsePercentValues(true);
@@ -273,17 +271,18 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
     public void onNothingSelected() {
         Log.i("PieChart", "nothing selected");
     }
+
     private void setData(List<Exercise> list) {
         ArrayList<PieEntry> entries = new ArrayList<>();
         int total = 0;
-        for(Exercise E: list ) {
+        for (Exercise E : list) {
 
             int ExerTime = Integer.valueOf(E.getExerciseTime().replace(" ", ""));
             total = total + ExerTime;
             entries.add(new PieEntry(ExerTime));
         }
 
-        int average = total/list.size();
+        int average = total / list.size();
         Averagetext.setText("Average time = " + average + " mins");
         HeartBeattext.setText("Heart Beat: 40 paces");
 
@@ -325,7 +324,6 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
         PieChart.highlightValues(null);
 
         PieChart.invalidate();
-
 
 
     }

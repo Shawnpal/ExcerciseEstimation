@@ -20,12 +20,8 @@ public class RestClient {
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                     .create();
 
-            // Add logging into retrofit 2.0
-        //    HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        //    logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-         //   httpClient.interceptors().add(logging);
 
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("http://10.0.2.2:8090")
                     .addConverterFactory(GsonConverterFactory.create(gson))
