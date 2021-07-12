@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private RetrofitInterface retrofitInterface;
     private String BASE_URL = "http://10.0.2.2:8090";
     private EditText nametext;
+    private LoginResult result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

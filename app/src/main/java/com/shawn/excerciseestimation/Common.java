@@ -2,6 +2,7 @@
 
 package com.shawn.excerciseestimation;
 
+//This Class defines Each Point and their representive Body Part
 public class Common {
 
     public enum CocoPart

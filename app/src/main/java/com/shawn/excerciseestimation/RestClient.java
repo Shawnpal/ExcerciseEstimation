@@ -12,9 +12,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestClient {
 
-    private static ExerciseList Exercise;
+    private static RetrofitInterface Exercise;
 
-    public static ExerciseList getClient() {
+    public static RetrofitInterface getClient() {
         if (Exercise == null) {
             Gson gson = new GsonBuilder()
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
@@ -27,7 +27,7 @@ public class RestClient {
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(httpClient.build()).build();
 
-            Exercise = retrofit.create(ExerciseList.class);
+            Exercise = retrofit.create(RetrofitInterface.class);
         }
         return Exercise;
     }

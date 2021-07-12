@@ -28,7 +28,6 @@ public class TensorFlowPoseDetector implements Classifier {
     // Pre-allocated buffers.
     private int[] intValues;
     private float[] floatValues;
-
     private float[] outputHeatMap;
     private float[] outputPafMat;
 
@@ -350,31 +349,23 @@ public class TensorFlowPoseDetector implements Classifier {
         }
         float _NMS_Threshold = Math.max(dSum / heatMat.length * 4.0f, NMS_Threshold);
 
-        //_NMS_Threshold = Math.min(_NMS_Threshold, 0.3f);
         _NMS_Threshold = Math.min(_NMS_Threshold, 0.3f);
-
-        ////logging.debug('nms, th=%f' % _NMS_Threshold)
-        ////# heatMat = gaussian_filter(heatMat, sigma=0.5)
 
         @SuppressWarnings("unchecked")
         ArrayList[] coords = new ArrayList[18];
 
-        //for plain in heatMat[:-1]:{ // for each image minus last
+
         for (int i = 0; i < 18; i++) {
             float[] img = new float[w * w];
             System.arraycopy(heatMat, i * w * w, img, 0, w * w);
-            //nms = non_max_suppression(plain, 5, _NMS_Threshold)
             float[] nms = non_max_suppression(img, w, w, 5, _NMS_Threshold);
-
-            //coords.append(np.where(nms >= _NMS_Threshold))
             coords[i] = new ArrayList<Coord>();
             coords[i].addAll(findCoords(nms, w, _NMS_Threshold));
         }
 
-        //logging.debug('estimate_pose1 : estimate pairs')
-        //connection_all =
+
         List<Connection> connection_all = new ArrayList<>();
-        //for (idx1, idx2), (paf_x_idx, paf_y_idx) in zip(CocoPairs, CocoPairsNetwork):{
+
         for (int i = 0; i < Common.CocoPairs.length; i++) {
             int idx1 = Common.CocoPairs[i][0];
             int idx2 = Common.CocoPairs[i][1];
@@ -383,21 +374,17 @@ public class TensorFlowPoseDetector implements Classifier {
             System.arraycopy(pafMat, Common.CocoPairsNetwork[i][0] * w * w, paf_x, 0, w * w);
             System.arraycopy(pafMat, Common.CocoPairsNetwork[i][1] * w * w, paf_y, 0, w * w);
 
-            //connection = estimate_pose_pair(coords, idx1, idx2, pafMat[paf_x_idx], pafMat[paf_y_idx])
             List<Connection> connections = estimate_pose_pair(coords,
                     idx1, idx2, // (idx1, idx2)
                     paf_x, paf_y, w); // (paf_x_idx, paf_y_idx)
 
-            //connection_all.extend(connection)
             connection_all.addAll(connections);
         }
 
-        ////logging.debug('estimate_pose2, connection=%d' % len(connection_all))
-        //connection_by_human = dict()
         HashMap<String, List<Connection>> connection_by_human = new HashMap<>();
-        //for idx, c in enumerate(connection_all):{
+
         for (int idx = 0; idx < connection_all.size(); idx++) {
-            //connection_by_human['human_%d' % idx] = [c]
+
             String key = String.format("human_%d", idx);
             if (!connection_by_human.containsKey(key)) {
                 connection_by_human.put(key, new ArrayList<Connection>());

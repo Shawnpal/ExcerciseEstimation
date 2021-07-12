@@ -49,7 +49,7 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor);
-        ExerciseList ExerciseAPI = RestClient.getClient();
+        RetrofitInterface ExerciseAPI = RestClient.getClient();
         HashMap<String, String> map = new HashMap<>();
         map.put("FirstName", "Shawn");
 
