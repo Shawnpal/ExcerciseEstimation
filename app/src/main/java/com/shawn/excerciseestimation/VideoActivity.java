@@ -60,7 +60,7 @@ import static com.shawn.excerciseestimation.GlobalConstants.MODEL_WIDTH;
 public class VideoActivity extends AppCompatActivity {
     private static int VIDEO_REQUEST = 101;
     private LineChart Linechart1, Linechart2;
-
+    private StorageManager storageManager;
     SurfaceHolder surfaceHolder;
     private static final int MP_INPUT_SIZE = 368;
     Hashtable<Integer,  Point[]> ht1 = new Hashtable<>();
@@ -88,6 +88,16 @@ public class VideoActivity extends AppCompatActivity {
         frame.addView(mAnimatedSurfaceView);
         Linechart1 = findViewById(R.id.LineChart1);
         Linechart2 = findViewById(R.id.LineChart2);
+        // Configure the detector
+        detector = TensorFlowPoseDetector.create(
+                this.getAssets(),
+                MP_MODEL_FILE,
+                MP_INPUT_SIZE,
+                MP_INPUT_NAME,
+                new String[]{MP_OUTPUT_L1, MP_OUTPUT_L2}
+        );
+
+
         //Bracket Organizer for Permission Checks
         {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -130,9 +140,6 @@ public class VideoActivity extends AppCompatActivity {
 
         // now in hours
         long now = TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis());
-
-
-
         ArrayList<ArrayList<Entry>> EntryArray = new ArrayList<>();
 
         for(int i = 0; i < 19; i++ )
@@ -239,9 +246,14 @@ public class VideoActivity extends AppCompatActivity {
 
             new Thread(() -> {
                 try {
-                       File auxFile = new File(Environment.getExternalStorageDirectory() + "/Movies", "sample1.mp4");
+                       File auxFile = new File(Environment.getExternalStorageDirectory() + "/Movies", "sample2.mp4");
+                    storageManager = new StorageManager(PointsArray,"result.txt",this.getApplicationContext());
                 //    File auxFile = new File(getPathFromUri(getApplicationContext(), videoUri));
                     doConvert(auxFile);
+                    //After the video is processed
+                    DTW dtw = new DTW();
+                    Hashtable<Integer,  int[]> StorageHashTable = storageManager.getHashTable("squat",getApplicationContext());
+                    dtw.result(StorageHashTable,PointsArray,"squat");
                 } catch (FrameGrabber.Exception e) {
                     e.printStackTrace();
                 } catch (FrameRecorder.Exception e) {
@@ -250,6 +262,8 @@ public class VideoActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }).start();
+
+
         }
 
 
@@ -275,26 +289,19 @@ public class VideoActivity extends AppCompatActivity {
             Bitmap currentImage = bitmapConverter.convert(frame);
             final Bitmap finalImage = processImage(currentImage);
 
-            // Configure the detector
-            detector = TensorFlowPoseDetector.create(
-                    this.getAssets(),
-                    MP_MODEL_FILE,
-                    MP_INPUT_SIZE,
-                    MP_INPUT_NAME,
-                    new String[]{MP_OUTPUT_L1, MP_OUTPUT_L2}
-            );
             // Perform inference.
             final List<Classifier.Recognition> results = detector.recognizeImage(finalImage);
             surfaceHolder = mAnimatedSurfaceView.getHolder();
             setupCanvas(canvas, results);
-
             PopulateList(results.get(0).humans);
-
             Log.d("Result",PointsArray.toString());
 
         }
         setChart();
         Log.d("Result",PointsArray.toString());
+
+
+
     }
 
     @SuppressLint("WrongCall")
@@ -414,9 +421,11 @@ public class VideoActivity extends AppCompatActivity {
 
 
     }
-    //gets the actual File Path from URI rather than emulatated
-    // Code copied from https://stackoverflow.com/questions/17546101/get-real-path-for-uri-android
-    public static String getPathFromUri(final Context context, final Uri uri) {
+
+
+        //gets the actual File Path from URI rather than emulatated
+        // Code copied from https://stackoverflow.com/questions/17546101/get-real-path-for-uri-android
+        public static String getPathFromUri ( final Context context, final Uri uri){
 
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
@@ -483,8 +492,8 @@ public class VideoActivity extends AppCompatActivity {
         return null;
     }
 
-    public static String getDataColumn(Context context, Uri uri, String selection,
-                                       String[] selectionArgs) {
+        public static String getDataColumn (Context context, Uri uri, String selection,
+            String[]selectionArgs){
 
         Cursor cursor = null;
         final String column = "_data";
@@ -507,35 +516,36 @@ public class VideoActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is ExternalStorageProvider.
-     */
-    public static boolean isExternalStorageDocument(Uri uri) {
+        /**
+         * @param uri The Uri to check.
+         * @return Whether the Uri authority is ExternalStorageProvider.
+         */
+        public static boolean isExternalStorageDocument (Uri uri){
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is DownloadsProvider.
-     */
-    public static boolean isDownloadsDocument(Uri uri) {
+        /**
+         * @param uri The Uri to check.
+         * @return Whether the Uri authority is DownloadsProvider.
+         */
+        public static boolean isDownloadsDocument (Uri uri){
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is MediaProvider.
-     */
-    public static boolean isMediaDocument(Uri uri) {
+        /**
+         * @param uri The Uri to check.
+         * @return Whether the Uri authority is MediaProvider.
+         */
+        public static boolean isMediaDocument (Uri uri){
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is Google Photos.
-     */
-    public static boolean isGooglePhotosUri(Uri uri) {
+        /**
+         * @param uri The Uri to check.
+         * @return Whether the Uri authority is Google Photos.
+         */
+        public static boolean isGooglePhotosUri (Uri uri){
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
+
 }

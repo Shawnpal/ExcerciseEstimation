@@ -28,6 +28,7 @@ public class MainMenuActivity  extends AppCompatActivity {
     private TextView SexText;
     private TextView EmailText;
 
+
     LoginResult result;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
