@@ -21,7 +21,7 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
 public class MainMenuActivity  extends AppCompatActivity {
     private Retrofit retrofit;
     private RetrofitInterface retrofitInterface;
-    String  FirstName;
+    String  Email;
     private TextView FirstNameText;
     private TextView LastNameText;
     private TextView AgeText;
@@ -41,7 +41,7 @@ public class MainMenuActivity  extends AppCompatActivity {
                 .build();
         retrofitInterface = retrofit.create(RetrofitInterface.class);
         Intent intent = getIntent();
-        FirstName = intent.getStringExtra("USERNAME");
+        Email = intent.getStringExtra("Email");
 
         FirstNameText = (TextView)findViewById(R.id.txtFirstname);
         LastNameText = (TextView)findViewById(R.id.txtLastname);
@@ -52,7 +52,7 @@ public class MainMenuActivity  extends AppCompatActivity {
 
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("FirstName", FirstName) ;
+        map.put("Email", Email) ;
         Call<LoginResult> call = retrofitInterface.executeLogin(map);
         call.enqueue(new Callback<LoginResult>(){
             @Override
@@ -61,8 +61,7 @@ public class MainMenuActivity  extends AppCompatActivity {
                 {
 
                     result = response.body();
-
-                   FirstNameText.setText((result.getFirstname()).replace(" ", "")); //Results returns a lot of spaces in the name we need to trim
+                    FirstNameText.setText((result.getFirstname()).replace(" ", "")); //Results returns a lot of spaces in the name we need to trim
                     LastNameText.setText((result.getLastname()).replace(" ", ""));
                     AgeText.setText((result.getAge()).replace(" ", ""));
                     EmailText.setText((result.getEmail()).replace(" ", ""));

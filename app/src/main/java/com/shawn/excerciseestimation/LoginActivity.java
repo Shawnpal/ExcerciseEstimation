@@ -113,9 +113,9 @@ public class LoginActivity extends AppCompatActivity {
 
     public void Onlogin(View view)
     {
-        String fName = nametext.getText().toString();
+        String Email = nametext.getText().toString();
         HashMap<String, String> map = new HashMap<>();
-        map.put("FirstName", fName) ;
+        map.put("email", Email) ;
 
         Call<LoginResult> call = retrofitInterface.executeLogin(map);
         call.enqueue(new Callback<LoginResult>(){
@@ -126,9 +126,9 @@ public class LoginActivity extends AppCompatActivity {
 
                     LoginResult result = response.body();
               //      Log.i("Success",result.toString());
-                    String resultTrimed = (result.getFirstname()).replace(" ", ""); //Results returns a lot of spaces in the name we need to trim
+                    String resultTrimed = (result.getEmail()).replace(" ", ""); //Results returns a lot of spaces in the name we need to trim
                     Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
-                    intent.putExtra("USERNAME", resultTrimed );
+                    intent.putExtra("Email", resultTrimed );
                     startActivity(intent);
                 }
             }

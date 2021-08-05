@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -20,11 +19,13 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.util.Size;
+
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,12 +34,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+
 
 import org.bytedeco.javacv.AndroidFrameConverter;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
@@ -51,20 +56,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import static com.shawn.excerciseestimation.GlobalConstants.MODEL_HEIGHT;
-import static com.shawn.excerciseestimation.GlobalConstants.MODEL_WIDTH;
 
 public class VideoActivity extends AppCompatActivity {
     private static int VIDEO_REQUEST = 101;
-    private LineChart Linechart1, Linechart2;
+    private int chartindex = 0;
     private StorageManager storageManager;
     SurfaceHolder surfaceHolder;
+    double[] Result;
+    Thread firstThread;
+    private LineChart chart;
     private static final int MP_INPUT_SIZE = 368;
-    Hashtable<Integer,  Point[]> ht1 = new Hashtable<>();
+    ArrayList<LineData> Datalist;
     ArrayList<Point[]> PointsArray = new ArrayList<>();
+    ArrayList<TextView> TextResultList = new ArrayList<>();
     private static final String MP_INPUT_NAME = "image";
     private static final String MP_OUTPUT_L1 = "Openpose/MConv_Stage6_L1_5_pointwise/BatchNorm/FusedBatchNorm";
     private static final String MP_OUTPUT_L2 = "Openpose/MConv_Stage6_L2_5_pointwise/BatchNorm/FusedBatchNorm";
@@ -74,7 +80,7 @@ public class VideoActivity extends AppCompatActivity {
     AnimatedSurfaceView mAnimatedSurfaceView;
     private Classifier detector;
 
-
+    Button PrevButton, NextButton;
 
 
 
@@ -86,8 +92,29 @@ public class VideoActivity extends AppCompatActivity {
         frame = findViewById(R.id.Frame);
         mAnimatedSurfaceView = new AnimatedSurfaceView(getApplicationContext());
         frame.addView(mAnimatedSurfaceView);
-        Linechart1 = findViewById(R.id.LineChart1);
-        Linechart2 = findViewById(R.id.LineChart2);
+        chart = findViewById(R.id.chart1);
+        PrevButton = findViewById(R.id.prevbutton);
+        NextButton = findViewById(R.id.nextbutton);
+
+
+        TextResultList.add( findViewById(R.id.txtResult1));
+        TextResultList.add( findViewById(R.id.txtResult2));
+        TextResultList.add( findViewById(R.id.txtResult3));
+        TextResultList.add( findViewById(R.id.txtResult4));
+        TextResultList.add( findViewById(R.id.txtResult5));
+        TextResultList.add( findViewById(R.id.txtResult6));
+        TextResultList.add( findViewById(R.id.txtResult7));
+        TextResultList.add( findViewById(R.id.txtResult8));
+        TextResultList.add( findViewById(R.id.txtResult9));
+        TextResultList.add( findViewById(R.id.txtResult10));
+        TextResultList.add( findViewById(R.id.txtResult11));
+        TextResultList.add( findViewById(R.id.txtResult12));
+        TextResultList.add( findViewById(R.id.txtResult13));
+        TextResultList.add( findViewById(R.id.txtResult14));
+        TextResultList.add( findViewById(R.id.txtResult15));
+        TextResultList.add( findViewById(R.id.txtResult16));
+        TextResultList.add( findViewById(R.id.txtResult17));
+
         // Configure the detector
         detector = TensorFlowPoseDetector.create(
                 this.getAssets(),
@@ -138,56 +165,148 @@ public class VideoActivity extends AppCompatActivity {
     }
     private void setChart() {
 
-        // now in hours
-        long now = TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis());
+
+        // no description text
+        chart.getDescription().setEnabled(false);
+
+        // enable touch gestures
+        chart.setTouchEnabled(true);
+
+        chart.setDragDecelerationFrictionCoef(0.9f);
+
+        // enable scaling and dragging
+        chart.setDragEnabled(true);
+        chart.setScaleEnabled(true);
+        chart.setDrawGridBackground(false);
+        chart.setHighlightPerDragEnabled(true);
+
+        // set an alternative background color
+        chart.setBackgroundColor(Color.WHITE);
+        chart.setViewPortOffsets(0f, 0f, 0f, 0f);
+
+
+
+
+
         ArrayList<ArrayList<Entry>> EntryArray = new ArrayList<>();
 
-        for(int i = 0; i < 19; i++ )
+        Datalist  = new ArrayList<>();
+        for(int i = 0; i < 18; i++ )
         {
             ArrayList<Entry> e =  new ArrayList<>();
             EntryArray.add(e);
-        }
 
-        int i = 0;
-        for(Point[] pa : PointsArray)
-        {
-            //Skips some by frames which doesn't see the whole body
-            if (pa.length != 19 )
-            continue;
-            for(Point  P : pa)
+
+        }
+     for (int p = 0;p < 17; p++) {
+
+
+
+
+            int index2 = 0;
+            for (Point[] points : PointsArray)
             {
-                if (P!=null) {
-                    ArrayList<Entry> entrylist = EntryArray.get(i);
-                    entrylist.add(new Entry(i, P.y));
-                    i++;
+
+                if(points[p] != null) {
+                    ArrayList<Entry> entrys = EntryArray.get(p);
+                    entrys.add(new Entry(index2, points[p].y));
+
+
                 }
+
+                index2++;
             }
-            i=0;
+        // create a dataset and give it a type
+         LineDataSet set = new LineDataSet(EntryArray.get(p), "DataSet" + p);
+         set.setAxisDependency(YAxis.AxisDependency.LEFT);
+         set.setColor(ColorTemplate.getHoloBlue());
+         set.setValueTextColor(ColorTemplate.getHoloBlue());
+         set.setLineWidth(1.5f);
+         set.setDrawCircles(false);
+         set.setDrawValues(false);
+         set.setFillAlpha(65);
+         set.setFillColor(ColorTemplate.getHoloBlue());
+         set.setHighLightColor(Color.rgb(244, 117, 117));
+         set.setDrawCircleHole(false);
+         LineData data = new LineData(set);
+         data.setValueTextColor(Color.BLACK);
+         data.setValueTextSize(3f);
+         Datalist.add(data);
+
+         // create a data object with the data sets
+
+
+         TextView result = TextResultList.get(p);
+         if(result != null) {
+             result.setText(GetBodyClassifier(p)+ " " + Result[p]);
+         }
+         
+        }
+
+     //Mock Data Set
+        {
+            ArrayList<Entry> values = new ArrayList<>();
+           // increment by 1 hour
+            for (int x = 1; x < 200; x++) {
+                Random r = new Random();
+                int low = 10;
+                int high = 1000;
+                int result = r.nextInt(high-low) + low;
+                values.add(new Entry(x, result)); // add one entry Cycle
+            }
+            // create a dataset and give it a type
+            LineDataSet set2 = new LineDataSet(values, "Mock Data Set");
+            set2.setAxisDependency(YAxis.AxisDependency.LEFT);
+            set2.setColor(ColorTemplate.getHoloBlue());
+            set2.setValueTextColor(ColorTemplate.getHoloBlue());
+            set2.setLineWidth(1.5f);
+            set2.setDrawCircles(false);
+            set2.setDrawValues(false);
+            set2.setFillAlpha(65);
+            set2.setFillColor(ColorTemplate.getHoloBlue());
+            set2.setHighLightColor(Color.rgb(244, 117, 117));
+            set2.setDrawCircleHole(false);
+            // create a data object with the data sets
+            LineData data2 = new LineData(set2);
+            data2.setValueTextColor(Color.BLACK);
+            data2.setValueTextSize(3f);
+            Legend l = chart.getLegend();
+            l.setEnabled(false);
+
+            XAxis xAxis = chart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
+            xAxis.setTextSize(10f);
+            xAxis.setTextColor(Color.WHITE);
+            xAxis.setDrawAxisLine(false);
+            xAxis.setDrawGridLines(true);
+            xAxis.setTextColor(Color.rgb(255, 192, 56));
+            xAxis.setCenterAxisLabels(true);
+            xAxis.setGranularity(1f); // one hour
+
+            YAxis leftAxis = chart.getAxisLeft();
+            leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
+
+            leftAxis.setTextColor(ColorTemplate.getHoloBlue());
+            leftAxis.setDrawGridLines(true);
+            leftAxis.setGranularityEnabled(true);
+            leftAxis.setAxisMinimum(0f);
+            leftAxis.setAxisMaximum(500f);
+            leftAxis.setYOffset(-9f);
+            leftAxis.setTextColor(Color.rgb(255, 192, 56));
+
+            YAxis rightAxis = chart.getAxisRight();
+            rightAxis.setEnabled(false);
+
+            if(data2 != null) {
+                chart.setData(Datalist.get(chartindex));
+                chart.invalidate();
+                PrevButton.setEnabled(true);
+                NextButton.setEnabled(true);
+            }
         }
 
 
 
-
-        // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(EntryArray.get(0), "DataSet 1");
-        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set1.setColor(ColorTemplate.getHoloBlue());
-        set1.setValueTextColor(ColorTemplate.getHoloBlue());
-        set1.setLineWidth(1.5f);
-        set1.setDrawCircles(false);
-        set1.setDrawValues(false);
-        set1.setFillAlpha(65);
-        set1.setFillColor(ColorTemplate.getHoloBlue());
-        set1.setHighLightColor(Color.rgb(244, 117, 117));
-        set1.setDrawCircleHole(false);
-
-        // create a data object with the data sets
-        LineData data = new LineData(set1);
-        data.setValueTextColor(Color.WHITE);
-        data.setValueTextSize(9f);
-
-        // set data
-        Linechart1.setData(data);
     }
 
 
@@ -224,6 +343,31 @@ public class VideoActivity extends AppCompatActivity {
         startActivityForResult(intent, 1);
     }
 
+    public void NextChart(View view) {
+        chartindex++;
+        if(chartindex > 18)
+            chartindex = 0;
+
+        if(!Datalist.isEmpty() && Datalist != null) {
+            chart.setData(Datalist.get(chartindex));
+            chart.invalidate();
+        }
+    }
+
+    public void PrevChart(View view) {
+        chartindex--;
+        if(chartindex < 0)
+            chartindex = 18;
+        if(!Datalist.isEmpty() && Datalist != null) {
+            chart.setData(Datalist.get(chartindex));
+            chart.invalidate();
+        }
+    }
+
+    public void OldResults(View view) {
+
+    }
+
 
     //CCOde after
     @Override
@@ -244,16 +388,27 @@ public class VideoActivity extends AppCompatActivity {
 
             Uri videoUri = data.getData();
 
-            new Thread(() -> {
+             firstThread = new Thread(() -> {
+
                 try {
-                       File auxFile = new File(Environment.getExternalStorageDirectory() + "/Movies", "sample2.mp4");
-                    storageManager = new StorageManager(PointsArray,"result.txt",this.getApplicationContext());
-                //    File auxFile = new File(getPathFromUri(getApplicationContext(), videoUri));
-                    doConvert(auxFile);
-                    //After the video is processed
-                    DTW dtw = new DTW();
-                    Hashtable<Integer,  int[]> StorageHashTable = storageManager.getHashTable("squat",getApplicationContext());
-                    dtw.result(StorageHashTable,PointsArray,"squat");
+                    synchronized (this) {
+                        File auxFile = new File(Environment.getExternalStorageDirectory() + "/Movies", "sample1.mp4");
+                        //    File auxFile = new File(getPathFromUri(getApplicationContext(), videoUri));
+
+                        doConvert(auxFile);
+                        //After the video is processed
+                        storageManager = new StorageManager(PointsArray, "result.txt", this.getApplicationContext());
+                        //    storageManager.writeToFile();
+                        DTW dtw = new DTW();
+                        Hashtable<Integer, int[]> StorageHashTable = storageManager.getHashTable("squat", getApplicationContext());
+                        Result = dtw.ConvertToHashedFrames(StorageHashTable, PointsArray, "squat");
+
+                        runOnUiThread(() -> {
+                            // Stuff that updates the UI
+                            setChart();
+                        });
+
+                    }
                 } catch (FrameGrabber.Exception e) {
                     e.printStackTrace();
                 } catch (FrameRecorder.Exception e) {
@@ -261,7 +416,9 @@ public class VideoActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }).start();
+             });
+                firstThread.start();
+
 
 
         }
@@ -297,7 +454,7 @@ public class VideoActivity extends AppCompatActivity {
             Log.d("Result",PointsArray.toString());
 
         }
-        setChart();
+
         Log.d("Result",PointsArray.toString());
 
 
@@ -342,9 +499,11 @@ public class VideoActivity extends AppCompatActivity {
         //Tensor flow 2.0 have a hash limit of 368 which is our MP_INPUT_SIZE
         //This means the pixel limit for the image is 368x368. this defect is fixed in tensorflor 2.3.2
         //First we grabbed the Center Crop for our rame
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
         Bitmap croppedBitmap = getResizedBitmap(bitmap, cropSize, cropSize);
-
-        return croppedBitmap;
+        Bitmap rotatedBitmap = Bitmap.createBitmap(croppedBitmap, 0, 0, croppedBitmap.getWidth(), croppedBitmap.getHeight(), matrix, true);
+        return rotatedBitmap;
     }
 
 
@@ -388,6 +547,51 @@ public class VideoActivity extends AppCompatActivity {
         dstBmp.recycle();
         return resizedBitmap;
     }
+    private String GetBodyClassifier(int p) {
+        switch(p) {
+            case 0:
+                return "Nose";
+            case 1:
+                return "Neck";
+            case 2:
+                return "RShoulder";
+            case 3:
+                return "RElbow";
+            case 4:
+                return "RWrist";
+            case 5:
+                return "LShoulder";
+            case 6:
+                return "LElbow";
+
+            case 7:
+                return "LWrist";
+            case 8:
+                return "RHip";
+            case 9:
+                return "RKnee";
+            case 10:
+                return "RAnkle";
+            case 11:
+                return "LHip";
+            case 12:
+                return "LKnee";
+            case 13:
+                return "LAnkle";
+            case 14:
+                return "REye";
+            case 15:
+                return "LEye";
+            case 16:
+                return "REar";
+            case 17:
+                return "LEar";
+            default:
+                return "NO Body Part";
+                // code block
+        }
+    }
+
 
     private void PopulateList(List<TensorFlowPoseDetector.Human> human_list)
     {

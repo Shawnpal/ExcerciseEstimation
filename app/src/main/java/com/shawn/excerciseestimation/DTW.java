@@ -20,7 +20,7 @@ public final class DTW {
     }
 
 
-    public static double[] result(Hashtable<Integer,  int[]> HashResult, ArrayList<Point[]> PointsArray, String exercisetype)
+    public static double[] ConvertToHashedFrames(Hashtable<Integer,  int[]> HashResult, ArrayList<Point[]> PointsArray, String exercisetype)
     {
         Set<Integer> keys = HashResult.keySet();
         Hashtable<Integer,  int[]> StorageHashTable = new Hashtable<>();
@@ -56,6 +56,7 @@ public final class DTW {
     public static double[] dtw(Hashtable<Integer,  int[]> h1, Hashtable<Integer,  int[]> h2, int radius) {
 
         double[] result = new double[19];
+        int[] t1 =
         Set<Integer> keys = h1.keySet();
         for (int f = 0; f < 18; f++) {
             int[] x1 = h1.get(f);

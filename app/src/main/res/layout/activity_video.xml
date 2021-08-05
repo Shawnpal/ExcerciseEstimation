@@ -8,75 +8,277 @@
     tools:context=".VideoActivity">
 
 
-    <Button
-        android:id="@+id/capturebutton"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:onClick="captureVideo"
-        android:text="CaptureVideo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <Button
-        android:id="@+id/explorerbutton"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:onClick="openFileChooser"
-        android:text="SelectVideo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/capturebutton" />
-
-    <Button
-        android:id="@+id/playbutton"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="PlayVideo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/explorerbutton" />
-
-
-
-
     <LinearLayout
-        android:id="@+id/LinearLay"
+        android:id="@+id/LinearLayButton"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="horizontal"
         android:weightSum="2"
-        app:layout_constraintBottom_toTopOf="@+id/Frame"
-        app:layout_constraintTop_toBottomOf="@+id/playbutton">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp">
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/LineChart1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/playbutton" />
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/LineChart2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+
+        <Button
+            android:id="@+id/explorerbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="openFileChooser"
             android:layout_weight="1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/chart1"
-            app:layout_constraintTop_toBottomOf="@+id/playbutton" />
+            android:text="SelectVideo"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/capturebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="captureVideo"
+            android:layout_weight="1"
+            android:text="CaptureVideo"
+            android:textSize="12sp" />
+
     </LinearLayout>
+
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart1"
+        android:layout_width="407dp"
+        android:layout_height="314dp"
+        android:layout_above="@+id/TableLayout"
+        app:layout_constraintBottom_toTopOf="@+id/TableLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LinearLayButton" />
+
+    <LinearLayout
+        android:id="@+id/NavLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        app:layout_constraintTop_toBottomOf="@+id/chart1"
+        tools:layout_editor_absoluteX="0dp">
+
+    <Button
+        android:id="@+id/nextbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:onClick="NextChart"
+        android:enabled="false"
+        android:text="NextChart"
+        android:textSize="12sp"
+     />
+
+        <Button
+            android:id="@+id/viewoldresultbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:onClick="OldResults"
+            android:enabled="false"
+            android:text="Old Results"
+            android:textSize="12sp"
+         />
+    <Button
+        android:id="@+id/prevbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:onClick="PrevChart"
+        android:enabled="false"
+        android:text="PrevChart"
+        android:textSize="12sp"
+       />
+    </LinearLayout>
+    <TableLayout
+        android:id="@+id/TableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/Frame"
+        >
+
+        <TableRow android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="2dp">
+        <TextView
+            android:id="@+id/txtResult1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Nose:" />
+
+        <TextView
+            android:id="@+id/txtResult2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Neck:" />
+
+        <TextView
+            android:id="@+id/txtResult3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="RShoulder:" />
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="2dp">
+
+            <TextView
+                android:id="@+id/txtResult4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="RElbow"
+                app:autoSizeTextType="uniform" />
+
+            <TextView
+                android:id="@+id/txtResult5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="RWrist:"
+                app:autoSizeTextType="uniform" />
+
+            <TextView
+                android:id="@+id/txtResult6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="LShoulder:" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="2dp">
+        <TextView
+            android:id="@+id/txtResult7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text=" LElbow:" />
+
+        <TextView
+            android:id="@+id/txtResult8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="LWrist:" />
+
+        <TextView
+            android:id="@+id/txtResult9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="RHIP:" />
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="2dp">
+
+        <TextView
+            android:id="@+id/txtResult10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="RKnee:" />
+
+        <TextView
+            android:id="@+id/txtResult11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="RAnkle:" />
+
+        <TextView
+            android:id="@+id/txtResult12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="LHip:" />
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="2dp">
+        <TextView
+            android:id="@+id/txtResult13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="LKnee:" />
+
+        <TextView
+            android:id="@+id/txtResult14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="LAnkle:" />
+
+        <TextView
+            android:id="@+id/txtResult15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="REye:" />
+
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="2dp">
+        <TextView
+            android:id="@+id/txtResult16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="LEye:" />
+
+        <TextView
+            android:id="@+id/txtResult17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="REar:" />
+            <TextView
+                android:id="@+id/txtResult18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="LEar:" />
+        </TableRow>
+
+
+    </TableLayout>
+
+
     <FrameLayout
         android:id="@+id/Frame"
-        android:layout_width="match_parent"
-        android:layout_height="320dp"
+        android:layout_width="251dp"
+        android:layout_height="148dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/LinearLay"
+        android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"

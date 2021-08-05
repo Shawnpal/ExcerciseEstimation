@@ -3,6 +3,9 @@ package com.shawn.excerciseestimation;
 import com.google.gson.annotations.SerializedName;
 public class LoginResult {
 
+    @SerializedName("UserID")
+    private String UserID;
+
     @SerializedName("FirstName")
     private String Firstname;
 
@@ -25,6 +28,10 @@ public class LoginResult {
 
     public String getFirstname() {
         return Firstname;
+    }
+
+    public String getUserID() {
+        return UserID;
     }
 
     public String getLastname() {

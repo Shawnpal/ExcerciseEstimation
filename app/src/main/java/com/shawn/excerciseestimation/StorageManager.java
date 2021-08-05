@@ -43,7 +43,7 @@ public class StorageManager{
         Hashtable<Integer,  int[]> Result = ReadtoHash(ExerciseType,ctx);
         return Result;
     }
-    private void writeToFile() {
+    public void writeToFile() {
 
         int FrameIndex=0;
         for (Point[] Frame : PointsArray) {
@@ -72,16 +72,16 @@ public class StorageManager{
 
         switch (ExerciseType) {
             case "Squat":
-                inputStream = ctx.getResources().openRawResource(R.raw.result);
+                inputStream = ctx.getResources().openRawResource(R.raw.squatresult);
                 break;
             case "PullUps":
-                inputStream = ctx.getResources().openRawResource(R.raw.result);
+                inputStream = ctx.getResources().openRawResource(R.raw.squatresult);
                 break;
             case "JumpingJack":
-                inputStream = ctx.getResources().openRawResource(R.raw.result);
+                inputStream = ctx.getResources().openRawResource(R.raw.squatresult);
                 break;
             default:
-                inputStream = ctx.getResources().openRawResource(R.raw.result);
+                inputStream = ctx.getResources().openRawResource(R.raw.squatresult);
         }
 
         if (inputStream != null) {
