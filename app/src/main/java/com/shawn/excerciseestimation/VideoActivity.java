@@ -206,18 +206,17 @@ public class VideoActivity extends AppCompatActivity {
             int index2 = 0;
             for (Point[] points : PointsArray)
             {
-
+                ArrayList<Entry> entrys = EntryArray.get(p);
                 if(points[p] != null) {
-                    ArrayList<Entry> entrys = EntryArray.get(p);
                     entrys.add(new Entry(index2, points[p].y));
-
-
+                }else{
+                    entrys.add(new Entry(index2, points[p-1].y));
                 }
 
                 index2++;
             }
         // create a dataset and give it a type
-         LineDataSet set = new LineDataSet(EntryArray.get(p), "DataSet" + p);
+         LineDataSet set = new LineDataSet(EntryArray.get(p), GetBodyClassifier(p) + " Dataset" );
          set.setAxisDependency(YAxis.AxisDependency.LEFT);
          set.setColor(ColorTemplate.getHoloBlue());
          set.setValueTextColor(ColorTemplate.getHoloBlue());
@@ -243,35 +242,9 @@ public class VideoActivity extends AppCompatActivity {
          
         }
 
-     //Mock Data Set
-        {
-            ArrayList<Entry> values = new ArrayList<>();
-           // increment by 1 hour
-            for (int x = 1; x < 200; x++) {
-                Random r = new Random();
-                int low = 10;
-                int high = 1000;
-                int result = r.nextInt(high-low) + low;
-                values.add(new Entry(x, result)); // add one entry Cycle
-            }
-            // create a dataset and give it a type
-            LineDataSet set2 = new LineDataSet(values, "Mock Data Set");
-            set2.setAxisDependency(YAxis.AxisDependency.LEFT);
-            set2.setColor(ColorTemplate.getHoloBlue());
-            set2.setValueTextColor(ColorTemplate.getHoloBlue());
-            set2.setLineWidth(1.5f);
-            set2.setDrawCircles(false);
-            set2.setDrawValues(false);
-            set2.setFillAlpha(65);
-            set2.setFillColor(ColorTemplate.getHoloBlue());
-            set2.setHighLightColor(Color.rgb(244, 117, 117));
-            set2.setDrawCircleHole(false);
-            // create a data object with the data sets
-            LineData data2 = new LineData(set2);
-            data2.setValueTextColor(Color.BLACK);
-            data2.setValueTextSize(3f);
+
             Legend l = chart.getLegend();
-            l.setEnabled(false);
+            l.setEnabled(true);
 
             XAxis xAxis = chart.getXAxis();
             xAxis.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
@@ -297,13 +270,13 @@ public class VideoActivity extends AppCompatActivity {
             YAxis rightAxis = chart.getAxisRight();
             rightAxis.setEnabled(false);
 
-            if(data2 != null) {
+
                 chart.setData(Datalist.get(chartindex));
                 chart.invalidate();
                 PrevButton.setEnabled(true);
                 NextButton.setEnabled(true);
-            }
-        }
+
+
 
 
 
@@ -345,7 +318,7 @@ public class VideoActivity extends AppCompatActivity {
 
     public void NextChart(View view) {
         chartindex++;
-        if(chartindex > 18)
+        if(chartindex > 16)
             chartindex = 0;
 
         if(!Datalist.isEmpty() && Datalist != null) {
@@ -357,7 +330,7 @@ public class VideoActivity extends AppCompatActivity {
     public void PrevChart(View view) {
         chartindex--;
         if(chartindex < 0)
-            chartindex = 18;
+            chartindex = 16;
         if(!Datalist.isEmpty() && Datalist != null) {
             chart.setData(Datalist.get(chartindex));
             chart.invalidate();
@@ -392,16 +365,18 @@ public class VideoActivity extends AppCompatActivity {
 
                 try {
                     synchronized (this) {
-                        File auxFile = new File(Environment.getExternalStorageDirectory() + "/Movies", "sample1.mp4");
-                        //    File auxFile = new File(getPathFromUri(getApplicationContext(), videoUri));
-
+                     //   File auxFile = new File(Environment.getExternalStorageDirectory() + "/Movies", "sample1.mp4");
+                        File auxFile = new File(getPathFromUri(getApplicationContext(), videoUri));
+                        PointsArray  = new ArrayList<>();
                         doConvert(auxFile);
                         //After the video is processed
                         storageManager = new StorageManager(PointsArray, "result.txt", this.getApplicationContext());
-                        //    storageManager.writeToFile();
+
                         DTW dtw = new DTW();
-                        Hashtable<Integer, int[]> StorageHashTable = storageManager.getHashTable("squat", getApplicationContext());
-                        Result = dtw.ConvertToHashedFrames(StorageHashTable, PointsArray, "squat");
+//                        storageManager.writeToFile();
+                        Hashtable<Integer, int[]> StorageHashTable = storageManager.getHashTable("Squat", getApplicationContext());
+
+                        Result = dtw.ConvertToHashedFrames(StorageHashTable, PointsArray, "Squat");
 
                         runOnUiThread(() -> {
                             // Stuff that updates the UI

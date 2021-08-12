@@ -49,15 +49,16 @@ public class StorageManager{
         for (Point[] Frame : PointsArray) {
             if (Frame==null)
                 continue;
-            textToWrite  = textToWrite + "F" + FrameIndex + ":";
+            textToWrite  = textToWrite;
 
             for(Point pt : Frame)
             {
                 if (pt==null)
-                    continue;
-                textToWrite = textToWrite + pt.y +",";
+                    textToWrite = textToWrite + 0 +",";
+                else
+                    textToWrite = textToWrite + pt.y +",";
             }
-            textToWrite = textToWrite + "/n ";
+            textToWrite = textToWrite + "\n ";
             FrameIndex++;
         }
         Log.e("Error",textToWrite);
@@ -72,7 +73,7 @@ public class StorageManager{
 
         switch (ExerciseType) {
             case "Squat":
-                inputStream = ctx.getResources().openRawResource(R.raw.squatresult);
+                inputStream = ctx.getResources().openRawResource(R.raw.squatrtennifront);
                 break;
             case "PullUps":
                 inputStream = ctx.getResources().openRawResource(R.raw.squatresult);
@@ -93,7 +94,7 @@ public class StorageManager{
                 int frame = 0;
                 int i = 0;
                 while ((line = br.readLine()) != null) {
-                    int[] intarray = new int[18];
+                    int[] intarray = new int[19];
                     i =0;
                     StringTokenizer multiTokenizer = new StringTokenizer(line, ",");
 

@@ -22,15 +22,15 @@ public final class DTW {
 
     public static double[] ConvertToHashedFrames(Hashtable<Integer,  int[]> HashResult, ArrayList<Point[]> PointsArray, String exercisetype)
     {
-        Set<Integer> keys = HashResult.keySet();
+        int keys = HashResult.size();
         Hashtable<Integer,  int[]> StorageHashTable = new Hashtable<>();
         Hashtable<Integer,  int[]> VideoHashTable = new Hashtable<>();
         for (int i = 0;i < 18; i++) {
             int[] tempintarray = new int[HashResult.size()];
             int[] tempintarray2 = new int[PointsArray.size()];
             int index = 0;
-            for (int key : keys) {
-            int[] temparray = HashResult.get(key);
+            for (int k = 0;k < keys; k++) {
+            int[] temparray = HashResult.get(k);
             tempintarray[index] =temparray[i];
             index++;
             }
@@ -39,16 +39,18 @@ public final class DTW {
             int index2 = 0;
             for (Point[] points : PointsArray)
             {
-                if(points[i] != null) {
+                if(points[i] == null)
+                    tempintarray2[index2] = 0;
+                else
                     tempintarray2[index2] = points[i].y;
-                }
+
                 index2++;
             }
             VideoHashTable.put(i,tempintarray2);
         }
 
 
-        double[] result = dtw(StorageHashTable,VideoHashTable,5);
+        double[] result = dtw(StorageHashTable,VideoHashTable,10);
         System.out.println(result);
         return result;
     }
@@ -56,11 +58,15 @@ public final class DTW {
     public static double[] dtw(Hashtable<Integer,  int[]> h1, Hashtable<Integer,  int[]> h2, int radius) {
 
         double[] result = new double[19];
-        int[] t1 =
         Set<Integer> keys = h1.keySet();
+       int[] intArray = new int[]{ 1,2,3,4,5,6,7,8,9,10 };
         for (int f = 0; f < 18; f++) {
             int[] x1 = h1.get(f);
+         //   int[] x2 = new int[]{ 1,1};
             int[] x2 = h2.get(f);
+        //    int[] x1 = new int[]{ 1,1,1,1,1,1,1,1,1,1,1,1,11,11,43,33,11,43,54,4,5,6,7,8,9,10,1,6,7,8,9,10,10,13,12,11,43,33,11,43,54,4,5,6,7,8,9,10,10,13,12,11,43,33};
+
+
             int n1 = x1.length;
             int n2 = x2.length;
             double[][] table = new double[2][n2 + 1];
