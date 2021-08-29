@@ -2,11 +2,13 @@ package com.shawn.excerciseestimation;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.shawn.excerciseestimation.Retrofit.LoginResult;
+import com.shawn.excerciseestimation.Retrofit.RetrofitInterface;
 
 import java.util.HashMap;
 
@@ -15,8 +17,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class MainMenuActivity  extends AppCompatActivity {
     private Retrofit retrofit;
@@ -52,7 +52,7 @@ public class MainMenuActivity  extends AppCompatActivity {
 
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("Email", Email) ;
+        map.put("email", Email) ;
         Call<LoginResult> call = retrofitInterface.executeLogin(map);
         call.enqueue(new Callback<LoginResult>(){
             @Override
@@ -78,4 +78,6 @@ public class MainMenuActivity  extends AppCompatActivity {
 
 
     }
+
+    p
 }

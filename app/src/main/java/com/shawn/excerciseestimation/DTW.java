@@ -20,7 +20,7 @@ public final class DTW {
     }
 
 
-    public static double[] ConvertToHashedFrames(Hashtable<Integer,  int[]> HashResult, ArrayList<Point[]> PointsArray, String exercisetype)
+    public static double[] ConvertToHashedFrames(Hashtable<Integer,  int[]> HashResult, ArrayList<Point[]> PointsArray)
     {
         int keys = HashResult.size();
         Hashtable<Integer,  int[]> StorageHashTable = new Hashtable<>();
@@ -50,22 +50,22 @@ public final class DTW {
         }
 
 
-        double[] result = dtw(StorageHashTable,VideoHashTable,10);
-        System.out.println(result);
+        double[] result = dtw(StorageHashTable,VideoHashTable);
+
         return result;
     }
 
-    public static double[] dtw(Hashtable<Integer,  int[]> h1, Hashtable<Integer,  int[]> h2, int radius) {
+
+
+    public static double[] dtw(Hashtable<Integer,  int[]> h1, Hashtable<Integer,  int[]> h2) {
 
         double[] result = new double[19];
-        Set<Integer> keys = h1.keySet();
-       int[] intArray = new int[]{ 1,2,3,4,5,6,7,8,9,10 };
+        //h1 is read from storage
+        //h2 is read from video
+
         for (int f = 0; f < 18; f++) {
             int[] x1 = h1.get(f);
-         //   int[] x2 = new int[]{ 1,1};
             int[] x2 = h2.get(f);
-        //    int[] x1 = new int[]{ 1,1,1,1,1,1,1,1,1,1,1,1,11,11,43,33,11,43,54,4,5,6,7,8,9,10,1,6,7,8,9,10,10,13,12,11,43,33,11,43,54,4,5,6,7,8,9,10,10,13,12,11,43,33};
-
 
             int n1 = x1.length;
             int n2 = x2.length;
@@ -73,20 +73,17 @@ public final class DTW {
 
             table[0][0] = 0;
 
-            for (int p = 1; p <= n2; p++) {
-                table[0][p] = Double.POSITIVE_INFINITY;
+            for (int i = 1; i <= n2; i++) {
+                table[0][i] = Double.POSITIVE_INFINITY;
             }
 
             for (int i = 1; i <= n1; i++) {
-                int start = Math.max(1, i - radius);
-                int end = Math.min(n2, i + radius);
+                table[1][0] = Double.POSITIVE_INFINITY;
 
-                table[1][start - 1] = Double.POSITIVE_INFINITY;
-                if (end < n2) table[1][end + 1] = Double.POSITIVE_INFINITY;
+                for (int j = 1; j <= n2; j++) {
 
-                for (int j = start; j <= end; j++) {
-                    double cost = Math.abs(x1[i - 1] - x2[j - 1]);
 
+                    double cost = Math.abs(x1[i-1] - x2[j-1]);
                     double min = table[0][j - 1];
 
                     if (min > table[0][j]) {
@@ -104,8 +101,10 @@ public final class DTW {
                 table[0] = table[1];
                 table[1] = swap;
             }
-            result[f] = table[0][n2];
+
+            result[f]= table[0][n2];
         }
+        // @return the distance.
         return result;
     }
 }

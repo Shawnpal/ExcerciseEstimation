@@ -7,6 +7,8 @@ import android.graphics.RectF;
 import android.os.Trace;
 import android.util.Log;
 
+import com.shawn.excerciseestimation.env.Common;
+
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 import java.util.ArrayList;

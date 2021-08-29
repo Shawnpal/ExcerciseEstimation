@@ -44,7 +44,7 @@
 
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/spinnerexercise"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/exercise"
@@ -73,14 +73,14 @@
         tools:layout_editor_absoluteX="0dp">
 
     <Button
-        android:id="@+id/nextbutton"
+        android:id="@+id/prevbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_weight="1"
-        android:onClick="NextChart"
+        android:onClick="PrevChart"
         android:enabled="false"
-        android:text="NextChart"
+        android:text="PrevChart"
         android:textSize="12sp"
      />
 
@@ -90,20 +90,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
-            android:onClick="OldResults"
-            android:enabled="false"
+            android:enabled="true"
+            android:onClick="GetResult"
             android:text="Old Results"
-            android:textSize="12sp"
-         />
+            android:textSize="12sp" />
     <Button
-        android:id="@+id/prevbutton"
+        android:id="@+id/nextbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_weight="1"
-        android:onClick="PrevChart"
+        android:onClick="NextChart"
         android:enabled="false"
-        android:text="PrevChart"
+        android:text="NextChart"
         android:textSize="12sp"
        />
     </LinearLayout>

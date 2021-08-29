@@ -8,10 +8,13 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.shawn.excerciseestimation.Retrofit.LoginResult;
+import com.shawn.excerciseestimation.Retrofit.RestClient;
+import com.shawn.excerciseestimation.Retrofit.RetrofitInterface;
 
 import java.util.HashMap;
 
@@ -20,8 +23,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -35,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        RetrofitInterface ExerciseAPI = RestClient.getClient();
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(((GlobalConstants) this.getApplication()).getBASE_URL())
@@ -92,9 +94,10 @@ public class LoginActivity extends AppCompatActivity {
                 // result of the request.
             }
         }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
+    Boolean test = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED)
         {
+
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET))
             {
 
@@ -113,6 +116,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void Onlogin(View view)
     {
+
+
         String Email = nametext.getText().toString();
         HashMap<String, String> map = new HashMap<>();
         map.put("email", Email) ;
@@ -125,7 +130,6 @@ public class LoginActivity extends AppCompatActivity {
                 {
 
                     LoginResult result = response.body();
-              //      Log.i("Success",result.toString());
                     String resultTrimed = (result.getEmail()).replace(" ", ""); //Results returns a lot of spaces in the name we need to trim
                     Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
                     intent.putExtra("Email", resultTrimed );

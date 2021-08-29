@@ -1,4 +1,4 @@
-package com.shawn.excerciseestimation;
+package com.shawn.excerciseestimation.Retrofit;
 
 import com.google.gson.annotations.SerializedName;
 

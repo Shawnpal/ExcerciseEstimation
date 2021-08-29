@@ -1,21 +1,18 @@
-package com.shawn.excerciseestimation;
-
-import android.app.Service;
+package com.shawn.excerciseestimation.Retrofit;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestClient {
 
-    private static RetrofitInterface Exercise;
+    private static RetrofitInterface retrofitInterface;
 
     public static RetrofitInterface getClient() {
-        if (Exercise == null) {
+        if (retrofitInterface == null) {
             Gson gson = new GsonBuilder()
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                     .create();
@@ -27,8 +24,8 @@ public class RestClient {
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(httpClient.build()).build();
 
-            Exercise = retrofit.create(RetrofitInterface.class);
+            retrofitInterface = retrofit.create(RetrofitInterface.class);
         }
-        return Exercise;
+        return retrofitInterface;
     }
 }

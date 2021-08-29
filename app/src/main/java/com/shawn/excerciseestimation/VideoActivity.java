@@ -1,7 +1,7 @@
 package com.shawn.excerciseestimation;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -19,22 +19,19 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
-
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-
+import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -43,45 +40,60 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
-
-
+import com.shawn.excerciseestimation.Retrofit.ExerciseResult;
+import com.shawn.excerciseestimation.Retrofit.RestClient;
+import com.shawn.excerciseestimation.Retrofit.RetrofitInterface;
+import com.shawn.excerciseestimation.env.Common;
 import org.bytedeco.javacv.AndroidFrameConverter;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class VideoActivity extends AppCompatActivity {
+
+
     private static int VIDEO_REQUEST = 101;
-    private int chartindex = 0;
-    private StorageManager storageManager;
-    SurfaceHolder surfaceHolder;
-    double[] Result;
-    Thread firstThread;
-    private LineChart chart;
+    private static int chartindex = 0;
     private static final int MP_INPUT_SIZE = 368;
-    ArrayList<LineData> Datalist;
-    ArrayList<Point[]> PointsArray = new ArrayList<>();
-    ArrayList<TextView> TextResultList = new ArrayList<>();
     private static final String MP_INPUT_NAME = "image";
     private static final String MP_OUTPUT_L1 = "Openpose/MConv_Stage6_L1_5_pointwise/BatchNorm/FusedBatchNorm";
     private static final String MP_OUTPUT_L2 = "Openpose/MConv_Stage6_L2_5_pointwise/BatchNorm/FusedBatchNorm";
     private static final String MP_MODEL_FILE = "file:///android_asset/frozen_person_model.pb";
 
+
+    private Retrofit retrofit;
+    private RetrofitInterface retrofitInterface;
+    String Email;
+    private StorageManager storageManager;
+    SurfaceHolder surfaceHolder;
+    double[] Result;
+    Thread firstThread;
+    private LineChart chart;
+    ListView listView;
+    Dialog myDialog;
+    Spinner spinner;
+    ArrayList<LineData> Datalist;
+    ArrayList<Point[]> PointsArray = new ArrayList<>();
+    ArrayList<TextView> TextResultList = new ArrayList<>();
+
     FrameLayout frame;
     AnimatedSurfaceView mAnimatedSurfaceView;
     private Classifier detector;
-
+    private List<ExerciseResult> ERlist = new ArrayList<ExerciseResult>();
     Button PrevButton, NextButton;
-
 
 
     @Override
@@ -90,30 +102,41 @@ public class VideoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video);
 
         frame = findViewById(R.id.Frame);
+        spinner = findViewById(R.id.spinnerexercise);
         mAnimatedSurfaceView = new AnimatedSurfaceView(getApplicationContext());
         frame.addView(mAnimatedSurfaceView);
+        listView = new ListView(this);
+        myDialog = new Dialog(this);
+        Intent intent = getIntent();
+        Email = intent.getStringExtra("Email");
+
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(((GlobalConstants) this.getApplication()).getBASE_URL())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        retrofitInterface = RestClient.getClient();
+
         chart = findViewById(R.id.chart1);
         PrevButton = findViewById(R.id.prevbutton);
         NextButton = findViewById(R.id.nextbutton);
-
-
-        TextResultList.add( findViewById(R.id.txtResult1));
-        TextResultList.add( findViewById(R.id.txtResult2));
-        TextResultList.add( findViewById(R.id.txtResult3));
-        TextResultList.add( findViewById(R.id.txtResult4));
-        TextResultList.add( findViewById(R.id.txtResult5));
-        TextResultList.add( findViewById(R.id.txtResult6));
-        TextResultList.add( findViewById(R.id.txtResult7));
-        TextResultList.add( findViewById(R.id.txtResult8));
-        TextResultList.add( findViewById(R.id.txtResult9));
-        TextResultList.add( findViewById(R.id.txtResult10));
-        TextResultList.add( findViewById(R.id.txtResult11));
-        TextResultList.add( findViewById(R.id.txtResult12));
-        TextResultList.add( findViewById(R.id.txtResult13));
-        TextResultList.add( findViewById(R.id.txtResult14));
-        TextResultList.add( findViewById(R.id.txtResult15));
-        TextResultList.add( findViewById(R.id.txtResult16));
-        TextResultList.add( findViewById(R.id.txtResult17));
+        TextResultList.add(findViewById(R.id.txtResult1));
+        TextResultList.add(findViewById(R.id.txtResult2));
+        TextResultList.add(findViewById(R.id.txtResult3));
+        TextResultList.add(findViewById(R.id.txtResult4));
+        TextResultList.add(findViewById(R.id.txtResult5));
+        TextResultList.add(findViewById(R.id.txtResult6));
+        TextResultList.add(findViewById(R.id.txtResult7));
+        TextResultList.add(findViewById(R.id.txtResult8));
+        TextResultList.add(findViewById(R.id.txtResult9));
+        TextResultList.add(findViewById(R.id.txtResult10));
+        TextResultList.add(findViewById(R.id.txtResult11));
+        TextResultList.add(findViewById(R.id.txtResult12));
+        TextResultList.add(findViewById(R.id.txtResult13));
+        TextResultList.add(findViewById(R.id.txtResult14));
+        TextResultList.add(findViewById(R.id.txtResult15));
+        TextResultList.add(findViewById(R.id.txtResult16));
+        TextResultList.add(findViewById(R.id.txtResult17));
 
         // Configure the detector
         detector = TensorFlowPoseDetector.create(
@@ -125,46 +148,30 @@ public class VideoActivity extends AppCompatActivity {
         );
 
 
-        //Bracket Organizer for Permission Checks
-        {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
 
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
-                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                    // app-defined int constant. The callback method gets the
-                    // result of the request.
-                }
-            }
-
-
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                    // app-defined int constant. The callback method gets the
-                    // result of the request.
-                }
-            }
-
-
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                    // app-defined int constant. The callback method gets the
-                    // result of the request.
-                }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
             }
         }
-    }
-    private void setChart() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            }
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            }
+        }
+
+    }
+
+    private void setChart() {
 
         // no description text
         chart.getDescription().setEnabled(false);
@@ -185,99 +192,85 @@ public class VideoActivity extends AppCompatActivity {
         chart.setViewPortOffsets(0f, 0f, 0f, 0f);
 
 
-
-
-
         ArrayList<ArrayList<Entry>> EntryArray = new ArrayList<>();
 
-        Datalist  = new ArrayList<>();
-        for(int i = 0; i < 18; i++ )
-        {
-            ArrayList<Entry> e =  new ArrayList<>();
+        Datalist = new ArrayList<>();
+        for (int i = 0; i < 17; i++) {
+            ArrayList<Entry> e = new ArrayList<>();
             EntryArray.add(e);
-
-
         }
-     for (int p = 0;p < 17; p++) {
-
-
-
-
+        for (int p = 0; p < 17; p++) {
             int index2 = 0;
-            for (Point[] points : PointsArray)
-            {
+            for (Point[] points : PointsArray) {
                 ArrayList<Entry> entrys = EntryArray.get(p);
-                if(points[p] != null) {
+                if (points[p] != null) {
                     entrys.add(new Entry(index2, points[p].y));
-                }else{
-                    entrys.add(new Entry(index2, points[p-1].y));
+                } else {
+                    if (points[p - 1] != null)
+                        entrys.add(new Entry(index2, points[p - 1].y));
+                    else
+                        entrys.add(new Entry(index2, 0));
                 }
-
                 index2++;
             }
-        // create a dataset and give it a type
-         LineDataSet set = new LineDataSet(EntryArray.get(p), GetBodyClassifier(p) + " Dataset" );
-         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-         set.setColor(ColorTemplate.getHoloBlue());
-         set.setValueTextColor(ColorTemplate.getHoloBlue());
-         set.setLineWidth(1.5f);
-         set.setDrawCircles(false);
-         set.setDrawValues(false);
-         set.setFillAlpha(65);
-         set.setFillColor(ColorTemplate.getHoloBlue());
-         set.setHighLightColor(Color.rgb(244, 117, 117));
-         set.setDrawCircleHole(false);
-         LineData data = new LineData(set);
-         data.setValueTextColor(Color.BLACK);
-         data.setValueTextSize(3f);
-         Datalist.add(data);
+            // create a dataset and give it a type
+            LineDataSet set = new LineDataSet(EntryArray.get(p), GetBodyClassifier(p) + " Dataset");
+            set.setAxisDependency(YAxis.AxisDependency.LEFT);
+            set.setColor(ColorTemplate.getHoloBlue());
+            set.setValueTextColor(ColorTemplate.getHoloBlue());
+            set.setLineWidth(1.5f);
+            set.setDrawCircles(false);
+            set.setDrawValues(false);
+            set.setFillAlpha(65);
+            set.setFillColor(ColorTemplate.getHoloBlue());
+            set.setHighLightColor(Color.rgb(244, 117, 117));
+            set.setDrawCircleHole(false);
+            LineData data = new LineData(set);
+            data.setValueTextColor(Color.BLACK);
+            data.setValueTextSize(3f);
+            Datalist.add(data);
 
-         // create a data object with the data sets
+            // create a data object with the data sets
 
 
-         TextView result = TextResultList.get(p);
-         if(result != null) {
-             result.setText(GetBodyClassifier(p)+ " " + Result[p]);
-         }
-         
+            TextView result = TextResultList.get(p);
+            if (result != null) {
+                result.setText(GetBodyClassifier(p) + " " + Result[p]);
+            }
+
         }
 
 
-            Legend l = chart.getLegend();
-            l.setEnabled(true);
+        Legend l = chart.getLegend();
+        l.setEnabled(true);
 
-            XAxis xAxis = chart.getXAxis();
-            xAxis.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
-            xAxis.setTextSize(10f);
-            xAxis.setTextColor(Color.WHITE);
-            xAxis.setDrawAxisLine(false);
-            xAxis.setDrawGridLines(true);
-            xAxis.setTextColor(Color.rgb(255, 192, 56));
-            xAxis.setCenterAxisLabels(true);
-            xAxis.setGranularity(1f); // one hour
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
+        xAxis.setTextSize(10f);
+        xAxis.setTextColor(Color.WHITE);
+        xAxis.setDrawAxisLine(false);
+        xAxis.setDrawGridLines(true);
+        xAxis.setTextColor(Color.rgb(255, 192, 56));
+        xAxis.setCenterAxisLabels(true);
 
-            YAxis leftAxis = chart.getAxisLeft();
-            leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
+        YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
 
-            leftAxis.setTextColor(ColorTemplate.getHoloBlue());
-            leftAxis.setDrawGridLines(true);
-            leftAxis.setGranularityEnabled(true);
-            leftAxis.setAxisMinimum(0f);
-            leftAxis.setAxisMaximum(500f);
-            leftAxis.setYOffset(-9f);
-            leftAxis.setTextColor(Color.rgb(255, 192, 56));
+        leftAxis.setTextColor(ColorTemplate.getHoloBlue());
+        leftAxis.setDrawGridLines(true);
+        leftAxis.setGranularityEnabled(true);
+        leftAxis.setAxisMinimum(0f);
+        leftAxis.setAxisMaximum(500f);
+        leftAxis.setYOffset(-9f);
+        leftAxis.setTextColor(Color.rgb(255, 192, 56));
 
-            YAxis rightAxis = chart.getAxisRight();
-            rightAxis.setEnabled(false);
+        YAxis rightAxis = chart.getAxisRight();
+        rightAxis.setEnabled(false);
 
-
-                chart.setData(Datalist.get(chartindex));
-                chart.invalidate();
-                PrevButton.setEnabled(true);
-                NextButton.setEnabled(true);
-
-
-
+        chart.setData(Datalist.get(chartindex));
+        chart.invalidate();
+        PrevButton.setEnabled(true);
+        NextButton.setEnabled(true);
 
 
     }
@@ -318,27 +311,51 @@ public class VideoActivity extends AppCompatActivity {
 
     public void NextChart(View view) {
         chartindex++;
-        if(chartindex > 16)
+        if (chartindex > 16)
             chartindex = 0;
-
-        if(!Datalist.isEmpty() && Datalist != null) {
+        if (!Datalist.isEmpty() && Datalist != null) {
             chart.setData(Datalist.get(chartindex));
             chart.invalidate();
         }
     }
+
+
 
     public void PrevChart(View view) {
         chartindex--;
-        if(chartindex < 0)
+        if (chartindex < 0)
             chartindex = 16;
-        if(!Datalist.isEmpty() && Datalist != null) {
+        if (!Datalist.isEmpty() && Datalist != null) {
             chart.setData(Datalist.get(chartindex));
             chart.invalidate();
         }
     }
 
-    public void OldResults(View view) {
+    public void GetResult(View view) {
 
+        myDialog.setContentView(R.layout.activity_popuplist);
+        ListView listView = myDialog.findViewById(R.id.ResultList);
+        HashMap<String, String> map = new HashMap<>();
+        map.put("Email","ShawnChen1915@gmail.com");
+
+
+        Call<List<ExerciseResult>> call = retrofitInterface.loadExerciseResults(map);
+
+        call.enqueue(new Callback<List<ExerciseResult>>() {
+            @Override
+            public void onResponse(Call<List<ExerciseResult>> call, Response<List<ExerciseResult>> response) {
+                for (ExerciseResult result : response.body()) {
+                    ERlist.add(result);
+                }
+            }
+            @Override
+            public void onFailure(Call<List<ExerciseResult>> call, Throwable t) {
+            }
+        });
+
+        ResultAdapter adapter = new ResultAdapter(this,R.layout.listadapter_view,ERlist);
+        listView.setAdapter(adapter);
+        myDialog.show();
     }
 
 
@@ -361,26 +378,46 @@ public class VideoActivity extends AppCompatActivity {
 
             Uri videoUri = data.getData();
 
-             firstThread = new Thread(() -> {
+            firstThread = new Thread(() -> {
 
                 try {
                     synchronized (this) {
-                     //   File auxFile = new File(Environment.getExternalStorageDirectory() + "/Movies", "sample1.mp4");
+                        //Grabs the file from
                         File auxFile = new File(getPathFromUri(getApplicationContext(), videoUri));
-                        PointsArray  = new ArrayList<>();
+
+                        PointsArray = new ArrayList<>();
                         doConvert(auxFile);
                         //After the video is processed
                         storageManager = new StorageManager(PointsArray, "result.txt", this.getApplicationContext());
 
                         DTW dtw = new DTW();
-//                        storageManager.writeToFile();
-                        Hashtable<Integer, int[]> StorageHashTable = storageManager.getHashTable("Squat", getApplicationContext());
+                        storageManager.writeToFile();
+                        Hashtable<Integer, int[]> StorageHashTable = storageManager.getHashTable( spinner.getSelectedItem().toString(), getApplicationContext());
 
-                        Result = dtw.ConvertToHashedFrames(StorageHashTable, PointsArray, "Squat");
+                        Result = dtw.ConvertToHashedFrames(StorageHashTable, PointsArray);
 
                         runOnUiThread(() -> {
                             // Stuff that updates the UI
                             setChart();
+                            //Save our Results to database
+                            ExerciseResult exerciseResult = new ExerciseResult(Result,spinner.getSelectedItem().toString(),Email);
+                            HashMap<String, String> map = new HashMap<>();
+                            map.put("Result", exerciseResult.getResult()) ;
+                            map.put("ExerciseID", exerciseResult.getExerciseID()) ;
+                            map.put("ResultUID",exerciseResult.getResultUID());
+                            map.put("PersonEmail",exerciseResult.getPersonEmail());
+                            map.put("Date",exerciseResult.getDate());
+
+                            Call<Void> call = retrofitInterface.executeSaveResult(map);
+                            call.enqueue(new Callback<Void>() {
+                                @Override
+                                public void onResponse(Call<Void> call, Response<Void> response) {
+                                }
+                                @Override
+                                public void onFailure(Call<Void> call, Throwable t) {
+                                }
+
+                            });
                         });
 
                     }
@@ -391,9 +428,8 @@ public class VideoActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-             });
-                firstThread.start();
-
+            });
+            firstThread.start();
 
 
         }
@@ -426,12 +462,11 @@ public class VideoActivity extends AppCompatActivity {
             surfaceHolder = mAnimatedSurfaceView.getHolder();
             setupCanvas(canvas, results);
             PopulateList(results.get(0).humans);
-            Log.d("Result",PointsArray.toString());
+            Log.d("Result", PointsArray.toString());
 
         }
 
-        Log.d("Result",PointsArray.toString());
-
+        Log.d("Result", PointsArray.toString());
 
 
     }
@@ -522,8 +557,9 @@ public class VideoActivity extends AppCompatActivity {
         dstBmp.recycle();
         return resizedBitmap;
     }
+
     private String GetBodyClassifier(int p) {
-        switch(p) {
+        switch (p) {
             case 0:
                 return "Nose";
             case 1:
@@ -538,7 +574,6 @@ public class VideoActivity extends AppCompatActivity {
                 return "LShoulder";
             case 6:
                 return "LElbow";
-
             case 7:
                 return "LWrist";
             case 8:
@@ -563,13 +598,12 @@ public class VideoActivity extends AppCompatActivity {
                 return "LEar";
             default:
                 return "NO Body Part";
-                // code block
+            // code block
         }
     }
 
 
-    private void PopulateList(List<TensorFlowPoseDetector.Human> human_list)
-    {
+    private void PopulateList(List<TensorFlowPoseDetector.Human> human_list) {
         int cp = Common.CocoPart.values().length;
         int image_w = 480;
         int image_h = 480;
@@ -579,19 +613,14 @@ public class VideoActivity extends AppCompatActivity {
             //part_idxs = human.keys()
             Set<Integer> part_idxs = human.parts.keySet();
 
-
-
             for (Common.CocoPart i : Common.CocoPart.values()) {
                 //if i not in part_idxs:
                 if (!part_idxs.contains(i.index)) {
                     Log.w("COORD %s, NULL, NULL", i.toString());
                     continue;
                 }
-                //part_coord = human[i][1]
                 TensorFlowPoseDetector.Coord part_coord = human.parts.get(i.index);
-                //center = (int(part_coord[0] * image_w + 0.5), int(part_coord[1] * image_h + 0.5))
                 Point center = new Point((int) (part_coord.x * image_w + 0.5f), (int) (part_coord.y * image_h + 0.5f));
-                //centers[i] = center
                 centers[i.index] = center;
 
             }
@@ -602,9 +631,9 @@ public class VideoActivity extends AppCompatActivity {
     }
 
 
-        //gets the actual File Path from URI rather than emulatated
-        // Code copied from https://stackoverflow.com/questions/17546101/get-real-path-for-uri-android
-        public static String getPathFromUri ( final Context context, final Uri uri){
+    //gets the actual File Path from URI rather than emulatated
+    // Code copied from https://stackoverflow.com/questions/17546101/get-real-path-for-uri-android
+    public static String getPathFromUri(final Context context, final Uri uri) {
 
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
@@ -671,8 +700,8 @@ public class VideoActivity extends AppCompatActivity {
         return null;
     }
 
-        public static String getDataColumn (Context context, Uri uri, String selection,
-            String[]selectionArgs){
+    public static String getDataColumn(Context context, Uri uri, String selection,
+                                       String[] selectionArgs) {
 
         Cursor cursor = null;
         final String column = "_data";
@@ -695,35 +724,35 @@ public class VideoActivity extends AppCompatActivity {
     }
 
 
-        /**
-         * @param uri The Uri to check.
-         * @return Whether the Uri authority is ExternalStorageProvider.
-         */
-        public static boolean isExternalStorageDocument (Uri uri){
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is ExternalStorageProvider.
+     */
+    public static boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 
-        /**
-         * @param uri The Uri to check.
-         * @return Whether the Uri authority is DownloadsProvider.
-         */
-        public static boolean isDownloadsDocument (Uri uri){
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is DownloadsProvider.
+     */
+    public static boolean isDownloadsDocument(Uri uri) {
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 
-        /**
-         * @param uri The Uri to check.
-         * @return Whether the Uri authority is MediaProvider.
-         */
-        public static boolean isMediaDocument (Uri uri){
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is MediaProvider.
+     */
+    public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-        /**
-         * @param uri The Uri to check.
-         * @return Whether the Uri authority is Google Photos.
-         */
-        public static boolean isGooglePhotosUri (Uri uri){
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is Google Photos.
+     */
+    public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 

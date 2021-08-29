@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -22,17 +21,19 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.shawn.excerciseestimation.Retrofit.Exercise;
+import com.shawn.excerciseestimation.Retrofit.RestClient;
+import com.shawn.excerciseestimation.Retrofit.RetrofitInterface;
+import com.shawn.excerciseestimation.Retrofit.Walks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,9 +67,7 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
             public void onResponse(Call<List<Exercise>> call, Response<List<Exercise>> response) {
                 for (Exercise size : response.body()) {
                     Elist.add(size);
-
                 }
-
                 setPieChart();
 
             }
@@ -91,7 +90,7 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
                     Wlist.add(size);
 
                 }
-                setBarChart();
+
             }
 
             @Override

@@ -1,22 +1,18 @@
 package com.shawn.excerciseestimation;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
+
+import com.shawn.excerciseestimation.env.Common;
 
 import java.util.List;
 import java.util.Set;
@@ -45,9 +41,6 @@ public class AnimatedSurfaceView extends SurfaceView implements SurfaceHolder.Ca
 
     }
 
-    public void surfaceadded(@NonNull SurfaceHolder holder) {
-
-    }
     @Override
     public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
 

@@ -1,6 +1,6 @@
 // Code migrated from https://github.com/ildoonet/tf-pose-estimation
 
-package com.shawn.excerciseestimation;
+package com.shawn.excerciseestimation.env;
 
 //This Class defines Each Point and their representive Body Part
 public class Common {
