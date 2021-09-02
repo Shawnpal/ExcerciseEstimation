@@ -147,7 +147,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/pushup">
+                android:background="@drawable/pushup"
+                android:onClick="OnOpenExercise">
 
                 <TextView
                     android:id="@+id/textView5"

@@ -1,7 +1,7 @@
 package com.shawn.excerciseestimation.Retrofit;
 
 import com.google.gson.annotations.SerializedName;
-public class LoginResult {
+public class Person {
 
     @SerializedName("UserID")
     private String UserID;
@@ -14,7 +14,6 @@ public class LoginResult {
 
     @SerializedName("Email")
     private String Email;
-
 
     @SerializedName("Sex")
     private String Sex;

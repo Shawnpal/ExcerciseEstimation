@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.shawn.excerciseestimation.Retrofit.LoginResult;
+import com.shawn.excerciseestimation.Retrofit.Person;
 import com.shawn.excerciseestimation.Retrofit.RestClient;
 import com.shawn.excerciseestimation.Retrofit.RetrofitInterface;
 
@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private RetrofitInterface retrofitInterface;
     private String BASE_URL = "http://10.0.2.2:8090";
     private EditText nametext;
-    private LoginResult result;
+    private Person result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                 // result of the request.
             }
         }
-    Boolean test = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED)
         {
 
@@ -112,9 +112,13 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    public void OnOffline(View view) {
+        Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+        startActivity(intent);
+    }
 
 
-    public void Onlogin(View view)
+        public void Onlogin(View view)
     {
 
 
@@ -122,14 +126,14 @@ public class LoginActivity extends AppCompatActivity {
         HashMap<String, String> map = new HashMap<>();
         map.put("email", Email) ;
 
-        Call<LoginResult> call = retrofitInterface.executeLogin(map);
-        call.enqueue(new Callback<LoginResult>(){
+        Call<Person> call = retrofitInterface.executeLogin(map);
+        call.enqueue(new Callback<Person>(){
             @Override
-            public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
+            public void onResponse(Call<Person> call, Response<Person> response) {
                 if(response.code()==200)
                 {
 
-                    LoginResult result = response.body();
+                    Person result = response.body();
                     String resultTrimed = (result.getEmail()).replace(" ", ""); //Results returns a lot of spaces in the name we need to trim
                     Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
                     intent.putExtra("Email", resultTrimed );
@@ -138,7 +142,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<LoginResult> call, Throwable t) {
+            public void onFailure(Call<Person> call, Throwable t) {
                 Toast.makeText(LoginActivity.this, t.getMessage(),Toast.LENGTH_LONG);
 
             }

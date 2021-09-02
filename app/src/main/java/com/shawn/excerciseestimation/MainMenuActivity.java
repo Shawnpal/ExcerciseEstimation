@@ -2,12 +2,13 @@ package com.shawn.excerciseestimation;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.shawn.excerciseestimation.Retrofit.LoginResult;
+import com.shawn.excerciseestimation.Retrofit.Person;
 import com.shawn.excerciseestimation.Retrofit.RetrofitInterface;
 
 import java.util.HashMap;
@@ -29,7 +30,7 @@ public class MainMenuActivity  extends AppCompatActivity {
     private TextView EmailText;
 
 
-    LoginResult result;
+    Person result;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
@@ -53,10 +54,10 @@ public class MainMenuActivity  extends AppCompatActivity {
 
         HashMap<String, String> map = new HashMap<>();
         map.put("email", Email) ;
-        Call<LoginResult> call = retrofitInterface.executeLogin(map);
-        call.enqueue(new Callback<LoginResult>(){
+        Call<Person> call = retrofitInterface.executeLogin(map);
+        call.enqueue(new Callback<Person>(){
             @Override
-            public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
+            public void onResponse(Call<Person> call, Response<Person> response) {
                 if(response.code()==200)
                 {
 
@@ -70,13 +71,20 @@ public class MainMenuActivity  extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<LoginResult> call, Throwable t) {
+            public void onFailure(Call<Person> call, Throwable t) {
                 Toast.makeText(MainMenuActivity.this, t.getMessage(),Toast.LENGTH_LONG);
 
             }
         });
 
 
+    }
+
+    public void OnOpenExercise(View view)
+    {
+        Intent intent = new Intent(getApplicationContext(), VideoActivity.class);
+        intent.putExtra("Email", Email );
+        startActivity(intent);
     }
 
 

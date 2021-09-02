@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -92,7 +93,7 @@ public class VideoActivity extends AppCompatActivity {
     FrameLayout frame;
     AnimatedSurfaceView mAnimatedSurfaceView;
     private Classifier detector;
-    private List<ExerciseResult> ERlist = new ArrayList<ExerciseResult>();
+    private List<ExerciseResult> ERlist ;
     Button PrevButton, NextButton;
 
 
@@ -337,29 +338,34 @@ public class VideoActivity extends AppCompatActivity {
         ListView listView = myDialog.findViewById(R.id.ResultList);
         HashMap<String, String> map = new HashMap<>();
         map.put("Email","ShawnChen1915@gmail.com");
-
+        ERlist = new ArrayList<ExerciseResult>();
 
         Call<List<ExerciseResult>> call = retrofitInterface.loadExerciseResults(map);
-
+        Context context = this;
         call.enqueue(new Callback<List<ExerciseResult>>() {
             @Override
             public void onResponse(Call<List<ExerciseResult>> call, Response<List<ExerciseResult>> response) {
                 for (ExerciseResult result : response.body()) {
                     ERlist.add(result);
                 }
+                ResultAdapter adapter = new ResultAdapter(context,R.layout.listadapter_view,ERlist);
+                listView.setAdapter(adapter);
+                myDialog.show();
+
             }
             @Override
             public void onFailure(Call<List<ExerciseResult>> call, Throwable t) {
             }
         });
 
-        ResultAdapter adapter = new ResultAdapter(this,R.layout.listadapter_view,ERlist);
-        listView.setAdapter(adapter);
-        myDialog.show();
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            }, 4000);
+
     }
 
 
-    //CCOde after
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
