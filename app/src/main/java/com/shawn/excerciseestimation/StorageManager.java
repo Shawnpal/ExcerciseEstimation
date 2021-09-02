@@ -72,11 +72,11 @@ public class StorageManager{
         InputStream inputStream;
 
         switch (ExerciseType) {
-            case "Squat":
+            case "Squats":
                 inputStream = ctx.getResources().openRawResource(R.raw.squatresult);
                 break;
-            case "PullUps":
-                inputStream = ctx.getResources().openRawResource(R.raw.squatresult);
+            case "HighKnee":
+                inputStream = ctx.getResources().openRawResource(R.raw.hkresult);
                 break;
             case "JumpingJack":
                 inputStream = ctx.getResources().openRawResource(R.raw.jjresult);
