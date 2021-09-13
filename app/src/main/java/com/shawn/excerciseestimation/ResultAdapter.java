@@ -36,10 +36,6 @@ public class ResultAdapter  extends ArrayAdapter<ExerciseResult> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        String ResultID = getItem(position).getResultUID();
-        String Result = getItem(position).getResult();
-        String PersonUID = getItem(position).getPersonEmail();
-        String Date = getItem(position).getDate();
         ArrayList<TextView> TextResultList = new ArrayList<>();
 
         LayoutInflater inflater = LayoutInflater.from(mcontext);
@@ -70,6 +66,7 @@ public class ResultAdapter  extends ArrayAdapter<ExerciseResult> {
 
         for (TextView text : TextResultList)
         {
+
             String s = companies[index];
             text.setText(s);
             index++;

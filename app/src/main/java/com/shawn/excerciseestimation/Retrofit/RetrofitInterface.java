@@ -10,10 +10,10 @@ import retrofit2.http.POST;
 public interface RetrofitInterface {
 
     @POST("/login")
-    Call<Person> executeLogin(@Body HashMap<String,String> map);
+    Call<User> executeLogin(@Body HashMap<String,String> map);
 
     @POST("/Exercise")
-    Call<Person> executeExercise(@Body HashMap<String,String> map);
+    Call<User> executeExercise(@Body HashMap<String,String> map);
 
     @POST("/signup")
     Call<Void> executeSignup(@Body HashMap<String,String> map);
@@ -27,7 +27,7 @@ public interface RetrofitInterface {
     @POST("/getResults")
     Call<List<ExerciseResult>> loadExerciseResults(@Body HashMap<String,String> map);
 
-    @POST("/getWalks")
-    Call<List<Walks>> loadWalks(@Body HashMap<String,String> map);
+    @POST("/getSteps")
+    Call<List<Steps>> loadSteps(@Body HashMap<String,String> map);
 
 }

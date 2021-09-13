@@ -105,7 +105,8 @@
                 android:background="@drawable/crunchmap"
                 android:backgroundTintMode="src_over"
                 android:drawingCacheQuality="auto"
-                android:foregroundTint="@color/black">
+                android:foregroundTint="@color/black"
+                android:onClick="OnOpenMonitor">
 
                 <TextView
                     android:id="@+id/textView2"

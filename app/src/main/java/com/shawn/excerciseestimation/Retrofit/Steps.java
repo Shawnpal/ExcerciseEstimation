@@ -2,10 +2,10 @@ package com.shawn.excerciseestimation.Retrofit;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Walks {
+public class Steps {
 
-    @SerializedName("WalkID")
-    private String WalkID;
+    @SerializedName("StepID")
+    private String StepID;
 
 
     @SerializedName("FirstName")
@@ -17,8 +17,8 @@ public class Walks {
     @SerializedName("Date")
     private String Date;
 
-    public String getWalkID() {
-        return WalkID;
+    public String getStepID() {
+        return StepID;
     }
 
     public String getFirstName() {

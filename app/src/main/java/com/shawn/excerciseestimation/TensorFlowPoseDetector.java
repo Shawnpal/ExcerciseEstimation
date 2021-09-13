@@ -140,7 +140,12 @@ public class TensorFlowPoseDetector implements Classifier {
         List<Human> humans = estimatePose(outputHeatMap, outputPafMat);
         Log.e(TAG, "Humans found = " + humans.size());
 
-        r0.humans = humans;
+        if(humans.size()>1) {
+            r0.humans.add(humans.get(0));
+            Log.e(TAG, "Humans found = " + humans.size()+ "returning only the first human dimensions");
+        }
+        else
+            r0.humans = humans;
 
         recognitions.add(r0);
         return recognitions;
@@ -180,23 +185,7 @@ public class TensorFlowPoseDetector implements Classifier {
     int Max_Human = 96;
 
 
-    private Bitmap debugOutput(float[] mat, int[] shape) {
-        int w = shape[0];
-        int h = shape[1];
-        int c = shape[2];
-        Log.i(TAG, "debugOutput " + w + " " + h + " " + c);
 
-        Bitmap bmp = Bitmap.createBitmap(w, (c * h), Bitmap.Config.ARGB_8888);
-        for (int i = 0; i < c; i++) {
-            for (int x = 0; x < w; x++) {
-                for (int y = 0; y < h; y++) {
-                    bmp.setPixel(x, (i * h) + y, outToColor(mat[(i * w * h) + (x * w) + y]));
-                }
-            }
-        }
-        return bmp;
-
-    }
 
 
     private float[] rollAxis(float[] input, int[] size, int axis) {
@@ -653,7 +642,7 @@ public class TensorFlowPoseDetector implements Classifier {
         float __num_inter_f = (float) __num_inter;
         float dx = x2 - x1;
         float dy = y2 - y1;
-        //normVec = math.sqrt(dx ** 2 + dy ** 2)
+
         float normVec = (float) Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
         if (normVec < 1e-4) {

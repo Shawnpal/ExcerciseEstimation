@@ -4,14 +4,17 @@ import com.google.gson.annotations.SerializedName;
 
 public class Exercise {
 
+    @SerializedName("ExerciseTrackerID")
+    private String ExerciseTrackerID;
+
     @SerializedName("ExerciseID")
     private String ExerciseID;
 
     @SerializedName("ExerciseName")
     private String ExerciseName;
 
-    @SerializedName("PersonFirstName")
-    private String Firstname;
+    @SerializedName("Email")
+    private String Email;
 
     @SerializedName("ExerciseType")
     private String ExerciseType;
@@ -32,12 +35,8 @@ public class Exercise {
         return ExerciseID;
     }
 
-    public String getExerciseName() {
-        return ExerciseName;
-    }
-
-    public String getFirstname() {
-        return Firstname;
+    public String getEmail() {
+        return Email;
     }
 
     public String getExerciseType() {

@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.shawn.excerciseestimation.Retrofit.Person;
+import com.shawn.excerciseestimation.Retrofit.User;
 import com.shawn.excerciseestimation.Retrofit.RetrofitInterface;
 
 import java.util.HashMap;
@@ -30,7 +30,7 @@ public class MainMenuActivity  extends AppCompatActivity {
     private TextView EmailText;
 
 
-    Person result;
+    User result;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
@@ -54,10 +54,10 @@ public class MainMenuActivity  extends AppCompatActivity {
 
         HashMap<String, String> map = new HashMap<>();
         map.put("email", Email) ;
-        Call<Person> call = retrofitInterface.executeLogin(map);
-        call.enqueue(new Callback<Person>(){
+        Call<User> call = retrofitInterface.executeLogin(map);
+        call.enqueue(new Callback<User>(){
             @Override
-            public void onResponse(Call<Person> call, Response<Person> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
                 if(response.code()==200)
                 {
 
@@ -71,7 +71,7 @@ public class MainMenuActivity  extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Person> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 Toast.makeText(MainMenuActivity.this, t.getMessage(),Toast.LENGTH_LONG);
 
             }
@@ -83,6 +83,13 @@ public class MainMenuActivity  extends AppCompatActivity {
     public void OnOpenExercise(View view)
     {
         Intent intent = new Intent(getApplicationContext(), VideoActivity.class);
+        intent.putExtra("Email", Email );
+        startActivity(intent);
+    }
+
+    public void OnOpenMonitor(View view)
+    {
+        Intent intent = new Intent(getApplicationContext(), EMonitorActivity.class);
         intent.putExtra("Email", Email );
         startActivity(intent);
     }

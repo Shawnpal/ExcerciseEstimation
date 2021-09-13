@@ -4,10 +4,10 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.shawn.excerciseestimation.Retrofit.ExerciseResult;
-import com.shawn.excerciseestimation.Retrofit.Person;
+import com.shawn.excerciseestimation.Retrofit.User;
 import com.shawn.excerciseestimation.Retrofit.RestClient;
 import com.shawn.excerciseestimation.Retrofit.RetrofitInterface;
-import com.shawn.excerciseestimation.Retrofit.Walks;
+import com.shawn.excerciseestimation.Retrofit.Steps;
 
 import junit.framework.TestCase;
 
@@ -28,20 +28,20 @@ public class RetrofitInterfaceTests extends TestCase {
         RetrofitInterface ExerciseAPI = RestClient.getClient();
         HashMap<String, String> map = new HashMap<>();
         map.put("email", "Shawnchen1915@Gmail.com");
-        Call<Person> call = ExerciseAPI.executeLogin(map);
-        call.enqueue(new Callback<Person>(){
+        Call<User> call = ExerciseAPI.executeLogin(map);
+        call.enqueue(new Callback<User>(){
             @Override
-            public void onResponse(Call<Person> call, Response<Person> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
                 if(response.code()==200)
                 {
-                    Person result = response.body();
+                    User result = response.body();
                     String output = (result.getFirstname()).replace(" ", ""); //Results returns a lot of spaces in the name we need to trim
                     assertEquals("Shawn", output);
                 }
             }
 
             @Override
-            public void onFailure(Call<Person> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 Log.e("error",t.toString());
             }
 
@@ -56,15 +56,15 @@ public class RetrofitInterfaceTests extends TestCase {
         RetrofitInterface ExerciseAPI = RestClient.getClient();
         HashMap<String, String> map = new HashMap<>();
         map.put("FirstName", "Shawn");
-         List<Walks> Wlist = new ArrayList<Walks>();
-        Call<List<Walks>> loadBarCall = ExerciseAPI.loadWalks(map);
-        loadBarCall.enqueue(new Callback<List<Walks>>() {
+         List<Steps> Wlist = new ArrayList<Steps>();
+        Call<List<Steps>> loadBarCall = ExerciseAPI.loadSteps(map);
+        loadBarCall.enqueue(new Callback<List<Steps>>() {
 
 
             @Override
-            public void onResponse(Call<List<Walks>> call, Response<List<Walks>> response) {
+            public void onResponse(Call<List<Steps>> call, Response<List<Steps>> response) {
 
-                for (Walks size : response.body()) {
+                for (Steps size : response.body()) {
                     Wlist.add(size);
 
                 }
@@ -72,7 +72,7 @@ public class RetrofitInterfaceTests extends TestCase {
             }
 
             @Override
-            public void onFailure(Call<List<Walks>> call, Throwable t) {
+            public void onFailure(Call<List<Steps>> call, Throwable t) {
 
             }
 
@@ -138,15 +138,15 @@ public class RetrofitInterfaceTests extends TestCase {
         RetrofitInterface ExerciseAPI = RestClient.getClient();
         HashMap<String, String> map = new HashMap<>();
         map.put("PersonUI", "U10003");
-        List<Walks> Wlist = new ArrayList<Walks>();
-        Call<List<Walks>> loadBarCall = ExerciseAPI.loadWalks(map);
-        loadBarCall.enqueue(new Callback<List<Walks>>() {
+        List<Steps> Wlist = new ArrayList<Steps>();
+        Call<List<Steps>> loadBarCall = ExerciseAPI.loadSteps(map);
+        loadBarCall.enqueue(new Callback<List<Steps>>() {
 
 
             @Override
-            public void onResponse(Call<List<Walks>> call, Response<List<Walks>> response) {
+            public void onResponse(Call<List<Steps>> call, Response<List<Steps>> response) {
 
-                for (Walks size : response.body()) {
+                for (Steps size : response.body()) {
                     Wlist.add(size);
 
                 }
@@ -154,7 +154,7 @@ public class RetrofitInterfaceTests extends TestCase {
             }
 
             @Override
-            public void onFailure(Call<List<Walks>> call, Throwable t) {
+            public void onFailure(Call<List<Steps>> call, Throwable t) {
 
             }
 
@@ -168,21 +168,21 @@ public class RetrofitInterfaceTests extends TestCase {
         RetrofitInterface ExerciseAPI = RestClient.getClient();
         HashMap<String, String> map = new HashMap<>();
         map.put("email", "Shawnchen1915@Gmail.com");
-        Call<Person> call = ExerciseAPI.executeLogin(map);
+        Call<User> call = ExerciseAPI.executeLogin(map);
         final String[] output = new String[1];
-        call.enqueue(new Callback<Person>(){
+        call.enqueue(new Callback<User>(){
             @Override
-            public void onResponse(Call<Person> call, Response<Person> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
                 if(response.code()==200)
                 {
-                    Person result = response.body();
+                    User result = response.body();
                     output[0] = (result.getFirstname()).replace(" ", ""); //Results returns a lot of spaces in the name we need to trim
 
                 }
             }
 
             @Override
-            public void onFailure(Call<Person> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 Log.e("error",t.toString());
             }
 

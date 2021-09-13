@@ -1,5 +1,6 @@
 package com.shawn.excerciseestimation;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,7 +30,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.shawn.excerciseestimation.Retrofit.Exercise;
 import com.shawn.excerciseestimation.Retrofit.RestClient;
 import com.shawn.excerciseestimation.Retrofit.RetrofitInterface;
-import com.shawn.excerciseestimation.Retrofit.Walks;
+import com.shawn.excerciseestimation.Retrofit.Steps;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +42,10 @@ import retrofit2.Response;
 
 public class EMonitorActivity extends AppCompatActivity implements OnChartValueSelectedListener {
     private PieChart PieChart;
-    private List<Exercise> Elist = new ArrayList<Exercise>();
-    private List<Walks> Wlist = new ArrayList<Walks>();
+    private List<Exercise> Elist ;
+    private List<Steps> Wlist ;
     private TextView Averagetext, HeartBeattext;
-
+    String  Email;
     private BarChart BarChart;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +53,12 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
         setContentView(R.layout.activity_monitor);
         RetrofitInterface ExerciseAPI = RestClient.getClient();
         HashMap<String, String> map = new HashMap<>();
-        map.put("FirstName", "Shawn");
+        Intent intent = getIntent();
+        Email = intent.getStringExtra("Email");
+        map.put("email", Email);
 
         Call<List<Exercise>> loadSizeCall = ExerciseAPI.loadExercise(map);
-        Call<List<Walks>> loadBarCall = ExerciseAPI.loadWalks(map);
+        Call<List<Steps>> loadBarCall = ExerciseAPI.loadSteps(map);
         PieChart = findViewById(R.id.piechart);
         BarChart = findViewById(R.id.barchart);
         HeartBeattext = findViewById(R.id.textHeartBeat);
@@ -65,6 +68,7 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
         loadSizeCall.enqueue(new Callback<List<Exercise>>() {
             @Override
             public void onResponse(Call<List<Exercise>> call, Response<List<Exercise>> response) {
+                Elist = new ArrayList<Exercise>();
                 for (Exercise size : response.body()) {
                     Elist.add(size);
                 }
@@ -80,21 +84,22 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
 
         });
 
-        loadBarCall.enqueue(new Callback<List<Walks>>() {
+        loadBarCall.enqueue(new Callback<List<Steps>>() {
 
 
             @Override
-            public void onResponse(Call<List<Walks>> call, Response<List<Walks>> response) {
-
-                for (Walks size : response.body()) {
+            public void onResponse(Call<List<Steps>> call, Response<List<Steps>> response) {
+                Wlist = new ArrayList<Steps>();
+                for (Steps size : response.body()) {
                     Wlist.add(size);
 
                 }
+                setBarChart();
 
             }
 
             @Override
-            public void onFailure(Call<List<Walks>> call, Throwable t) {
+            public void onFailure(Call<List<Steps>> call, Throwable t) {
 
             }
 
@@ -280,9 +285,10 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
             total = total + ExerTime;
             entries.add(new PieEntry(ExerTime));
         }
-
-        int average = total / list.size();
-        Averagetext.setText("Average time = " + average + " mins");
+        int average = 0;
+        if (list.size() > 0)
+             average = total / list.size();
+        Averagetext.setText("Average Exercise Time = " + average + " mins");
         HeartBeattext.setText("Heart Beat: 40 paces");
 
 

@@ -237,7 +237,14 @@ public class VideoActivity extends AppCompatActivity {
             TextView result = TextResultList.get(p);
             if (result != null) {
                 result.setText(GetBodyClassifier(p) + " " + Result[p]);
+                if(Result[p] >= 0 &&Result[p] <= 700)
+                    result.setTextColor(Color.parseColor("#5ec639"));
+                else if((Result[p] >= 701 &&Result[p] <= 1200))
+                    result.setTextColor(Color.parseColor("#a139c6"));
+                else
+                    result.setTextColor(Color.parseColor("#c6395e"));
             }
+
 
         }
 
@@ -337,7 +344,7 @@ public class VideoActivity extends AppCompatActivity {
         myDialog.setContentView(R.layout.activity_popuplist);
         ListView listView = myDialog.findViewById(R.id.ResultList);
         HashMap<String, String> map = new HashMap<>();
-        map.put("Email","ShawnChen1915@gmail.com");
+        map.put("Email",Email);
         ERlist = new ArrayList<ExerciseResult>();
 
         Call<List<ExerciseResult>> call = retrofitInterface.loadExerciseResults(map);
@@ -464,15 +471,16 @@ public class VideoActivity extends AppCompatActivity {
             final Bitmap finalImage = processImage(currentImage);
 
             // Perform inference.
+
             final List<Classifier.Recognition> results = detector.recognizeImage(finalImage);
             surfaceHolder = mAnimatedSurfaceView.getHolder();
             setupCanvas(canvas, results);
             PopulateList(results.get(0).humans);
-            Log.d("Result", PointsArray.toString());
+
 
         }
 
-        Log.d("Result", PointsArray.toString());
+
 
 
     }
@@ -493,7 +501,6 @@ public class VideoActivity extends AppCompatActivity {
             } catch (InterruptedException e) {
             }
         }
-        mTimePrevious = System.currentTimeMillis();
 
         try {
             canvas = surfaceHolder.lockCanvas(null);
