@@ -25,8 +25,9 @@ public class Steps {
         return FirstName;
     }
 
-    public String getLength() {
-        return Length;
+    public Float getLength() {
+        float f=Float.parseFloat(Length);
+        return f;
     }
 
     public String getDate() {

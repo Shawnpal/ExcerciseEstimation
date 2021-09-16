@@ -159,50 +159,38 @@ public class EMonitorActivity extends AppCompatActivity implements OnChartValueS
         float barSpace = 0.03f; // x4 DataSet
         float barWidth = 0.2f; // x4 DataSet
         // (0.2 + 0.03) * 4 + 0.08 = 1.00 -> interval per "group"
+        ArrayList<ArrayList<BarEntry>> values = new ArrayList<>();
+        int index = 0;
+        for (Steps s : Wlist) {
+            ArrayList<BarEntry> value = new ArrayList<>();
+            value.add(new BarEntry(1,s.getLength() ));
+            values.add(value);
 
+            index++;
 
-        ArrayList<BarEntry> values1 = new ArrayList<>();
-        ArrayList<BarEntry> values2 = new ArrayList<>();
-        ArrayList<BarEntry> values3 = new ArrayList<>();
-        ArrayList<BarEntry> values4 = new ArrayList<>();
-
-        values1.add(new BarEntry(1, (float) (Math.random() * 2)));
-        values2.add(new BarEntry(1, (float) (Math.random() * 4)));
-        values3.add(new BarEntry(1, (float) (Math.random() * 2)));
-        values4.add(new BarEntry(1, (float) (Math.random() * 4)));
-
-        BarDataSet set1, set2, set3, set4;
-
-        if (BarChart.getData() != null && BarChart.getData().getDataSetCount() > 0) {
-
-            set1 = (BarDataSet) BarChart.getData().getDataSetByIndex(0);
-            set2 = (BarDataSet) BarChart.getData().getDataSetByIndex(1);
-            set3 = (BarDataSet) BarChart.getData().getDataSetByIndex(2);
-            set4 = (BarDataSet) BarChart.getData().getDataSetByIndex(3);
-            set1.setValues(values1);
-            set2.setValues(values2);
-            set3.setValues(values3);
-            set4.setValues(values4);
-            BarChart.getData().notifyDataChanged();
-            BarChart.notifyDataSetChanged();
-
-        } else {
-            // create 4 DataSets
-            set1 = new BarDataSet(values1, "Company A");
-            set1.setColor(Color.rgb(104, 241, 175));
-            set2 = new BarDataSet(values2, "Company B");
-            set2.setColor(Color.rgb(164, 228, 251));
-            set3 = new BarDataSet(values3, "Company C");
-            set3.setColor(Color.rgb(242, 247, 158));
-            set4 = new BarDataSet(values4, "Company D");
-            set4.setColor(Color.rgb(255, 102, 0));
-
-            BarData data = new BarData(set1, set2, set3, set4);
-            data.setValueFormatter(new LargeValueFormatter());
-
-
-            BarChart.setData(data);
         }
+        BarDataSet set0,set1, set2, set3, set4 ,set5,set6;
+        set0 = new BarDataSet(values.get(0), Wlist.get(0).getDate());
+        set0.setColor(Color.rgb(104, 241, 175));
+        set1 = new BarDataSet(values.get(1), Wlist.get(1).getDate());
+        set1.setColor(Color.rgb(104, 241, 175));
+        set2 = new BarDataSet(values.get(2), Wlist.get(2).getDate());
+        set2.setColor(Color.rgb(104, 241, 175));
+        set3 = new BarDataSet(values.get(3), Wlist.get(3).getDate());
+        set3.setColor(Color.rgb(104, 241, 175));
+        set4 = new BarDataSet(values.get(4), Wlist.get(4).getDate());
+        set4.setColor(Color.rgb(104, 241, 175));
+        set5 = new BarDataSet(values.get(5), Wlist.get(5).getDate());
+        set5.setColor(Color.rgb(104, 241, 175));
+        set6 = new BarDataSet(values.get(6), Wlist.get(6).getDate());
+        set6.setColor(Color.rgb(104, 241, 175));
+
+        BarData data = new BarData(set0,set1, set2, set3, set4,set5,set6);
+        data.setValueFormatter(new LargeValueFormatter());
+
+
+        BarChart.setData(data);
+
 
         // specify the width each bar should have
         BarChart.getBarData().setBarWidth(barWidth);
